@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">XImageAppX</string>
+    <string name="like">Like</string>
+    <string name="set_wallpaper">Set wallpaper</string>
+    <string name="unsplash_image">Unsplash image</string>
+    <string name="results_could_not_be_loaded">Results could not be loaded</string>
+    <string name="retry">Retry</string>
+    <string name="no_results">No results found for this query</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="share">Share</string>
+    <string name="applogo">AppLogo</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log In</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="profile">Profile</string>
+</resources>

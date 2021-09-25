@@ -7,4 +7,6 @@
     <color name="black">#000</color>
     <color name="transparent">#00ffffff</color>
     <color name="grey">#999</color>
+    <color name="blue">#67BBE8</color>
+    <color name="purple">#441697</color>
 </resources>

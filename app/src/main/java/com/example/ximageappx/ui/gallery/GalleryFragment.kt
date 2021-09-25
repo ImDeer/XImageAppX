@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.paging.LoadState
 import com.example.ximageappx.R
 import com.example.ximageappx.data.UnsplashPhoto
@@ -102,13 +104,12 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
             true
         }
 
-        //TODO add profile fragment
-//        val profileItem = menu.findItem(R.id.action_profile)
-//        profileItem.setOnMenuItemClickListener{
-//            val action = GalleryFragmentDirections.actionGalleryFragmentToProfileFragment()
-//            findNavController().navigate(action)
-//            true
-//        }
+        val profileItem = menu.findItem(R.id.action_profile)
+        profileItem.setOnMenuItemClickListener{
+            val action = GalleryFragmentDirections.actionGalleryFragmentToProfileFragment()
+            findNavController().navigate(action)
+            true
+        }
 
         val searchItem = menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView

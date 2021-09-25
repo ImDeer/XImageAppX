@@ -22,18 +22,17 @@ class LogInFragment : Fragment(R.layout.fragment_login) {
         val binding = FragmentLoginBinding.bind(view)
 
         binding.apply {
+            setHasOptionsMenu(false)
+
+            tvSignUp.setOnClickListener {
+                val action = LogInFragmentDirections.actionLogInFragmentToRegisterFragment()
+                findNavController().navigate(action)
+            }
+
             bt_login.setOnClickListener {
                 val email = input_email.text.toString().trim { it <= ' ' }
                 val pass = input_pass.text.toString().trim { it <= ' ' }
 
-//                when {
-//                    TextUtils.isEmpty(email) -> {
-//                        Toast.makeText(context, "Please enter Email", Toast.LENGTH_SHORT).show()
-//                    }
-//                    TextUtils.isEmpty(pass) -> {
-//                        Toast.makeText(context, "Please enter password", Toast.LENGTH_SHORT).show()
-//                    }
-//                    else -> {
                 if (email.isNotEmpty() && pass.isNotEmpty())
                     mAuth.signInWithEmailAndPassword(email, pass)
                         .addOnCompleteListener {
@@ -44,7 +43,7 @@ class LogInFragment : Fragment(R.layout.fragment_login) {
                                     LogInFragmentDirections.actionLogInFragmentToGalleryFragment()
                                 findNavController().navigate(action)
                             } else {
-                                Toast.makeText(context, "LogIn failed", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "LogIn failed" + it.exception, Toast.LENGTH_SHORT)
                                     .show()
                                 Log.e(TAG, "LogIn failed", it.exception)
                             }

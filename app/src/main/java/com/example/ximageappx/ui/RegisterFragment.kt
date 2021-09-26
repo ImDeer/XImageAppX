@@ -45,6 +45,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                                 Toast.makeText(context, "SignUp successful", Toast.LENGTH_SHORT)
                                     .show()
                                 mUser.child(mAuth.currentUser!!.uid).child("login").setValue(login)
+                                mUser.child(mAuth.currentUser!!.uid).child("email").setValue(email)
                                 val action =
                                     RegisterFragmentDirections.actionRegisterFragmentToGalleryFragment()
                                 findNavController().navigate(action)

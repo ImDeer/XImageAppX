@@ -22,7 +22,7 @@
                 android:layout_height="100dp"
                 android:src="@raw/logo" />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
@@ -30,27 +30,29 @@
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/tv_prof_login"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-thin"
-                android:text="@string/name"
+                android:text="@string/login"
                 android:textAllCaps="false"
                 android:textColor="@color/blue"
                 android:textSize="30sp" />
 
             <EditText
-                android:id="@+id/input_prof_nickname"
+                android:id="@+id/input_prof_login"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/input_bg"
+                android:focusable="auto"
+                android:focusableInTouchMode="true"
                 android:fontFamily="sans-serif-thin"
-                android:hint="@string/password"
+                android:hint="@string/login"
                 android:inputType="text"
                 android:textAlignment="center"
                 android:textColor="@color/purple"
@@ -77,9 +79,12 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/input_bg"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:fontFamily="sans-serif-thin"
-                android:hint="@string/password"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
+                android:singleLine="true"
                 android:textAlignment="center"
                 android:textColor="@color/purple"
                 android:textSize="24sp"

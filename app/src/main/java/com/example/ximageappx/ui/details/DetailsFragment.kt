@@ -19,6 +19,7 @@ import com.bumptech.glide.request.target.Target
 import com.example.ximageappx.MainActivity
 import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentDetailsBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -31,12 +32,17 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     private val args by navArgs<DetailsFragmentArgs>()
 
+    private val uid = FirebaseAuth.getInstance().currentUser?.uid
 
     // loads details fragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val imageRef = Firebase.database.getReference("unsplashImages")//${args.photo.id}/liked")
+        val userRef = Firebase.database.getReference("users")
+        val imageRef =
+            Firebase.database.getReference("likes/$uid")//${args.photo.id}/liked")
+
+//        lateinit var mUser: DatabaseReference
 
         var liked = false
 
@@ -46,8 +52,10 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.apply {
             val photo = args.photo
 
+//            mUser = Firebase.database.getReference("users/${photo.user}")
+
             Glide.with(this@DetailsFragment)
-                .load(photo.urls.full)
+                .load(photo.url)//s.full)
                 .error(R.drawable.ic_no_image)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed( // error
@@ -70,7 +78,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                     ): Boolean {
                         progressBar.isVisible = false
                         textViewCreator.isVisible = true
-                        textViewDescription.isVisible = photo.description != null
+                        textViewDescription.isVisible = photo.description != ""
                         likeButton.isVisible = true
                         wallpaperButton.isVisible = true
                         gradient.isVisible = true
@@ -88,13 +96,19 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             // clickable username
             textViewDescription.text = photo.description
 
-            val uri = Uri.parse(photo.links.html)
+            val uri = Uri.parse(photo.url)//.links.html)
             val intent = Intent(Intent.ACTION_VIEW, uri)
 
-            (activity as MainActivity).supportActionBar?.title = photo.user.username
+//            val login = mUser.child("login").toString()
+//            (activity as MainActivity).supportActionBar?.title = login//.username
+
+//            if (mUser.profilePhotoUrl != "")
+//                ivItemProfImage.setImageURI(mUser.profilePhotoUrl.toUri())
+//            else
+//                ivItemProfImage.setImageDrawable("@drawable/default_profile_image")
 
             textViewCreator.apply {
-                text = "Photo by ${photo.user.name} on Unsplash"
+//                text = "Photo by $login"//.name} on Unsplash"
                 setOnClickListener {
                     context.startActivity(intent)
                 }
@@ -102,12 +116,40 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
             }
 
+            userRef.child(photo.user)
+                .addValueEventListener(object : ValueEventListener {
+
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        // This method is called once with the initial value and again
+                        // whenever data at this location is updated.
+                        if (dataSnapshot.exists())// && dataSnapshot.value == true
+                        {
+                            val login = dataSnapshot.child("login").value.toString()
+                            val profilePhotoUrl =
+                                dataSnapshot.child("profilePhotoUrl").value.toString()
+                            textViewCreator.text = "Photo by $login"
+                            (activity as MainActivity).supportActionBar?.title = login
+                            if (profilePhotoUrl != "null")
+                                Glide.with(ivItemProfImage).load(profilePhotoUrl)
+                                    .error(R.drawable.default_profile_image).circleCrop()
+                                    .into(ivItemProfImage)
+                            else
+                                ivItemProfImage.setImageResource(R.drawable.default_profile_image)
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {}
+
+                })
+
+
+
             imageRef.child(photo.id).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
                     if (dataSnapshot.exists())
-                        liked = dataSnapshot.child("liked").value == true
+                        liked = dataSnapshot.value == true//.child("liked").value == true
 
                     if (liked)
                         likeButton.setImageResource(R.drawable.ic_like_liked)
@@ -126,7 +168,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             shareButton.setOnClickListener {
                 val shareIntent = Intent()
                 shareIntent.action = Intent.ACTION_SEND
-                shareIntent.putExtra(Intent.EXTRA_TEXT,photo.urls.full)
+                shareIntent.putExtra(Intent.EXTRA_TEXT, photo.url)//s.full)
 //                shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
                 shareIntent.type = "text/plain"
 //                shareIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
@@ -158,7 +200,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             // change liked state
             likeButton.setOnClickListener {
                 if (!liked)
-                    imageRef.child(photo.id).child("liked").setValue(true)
+                    imageRef.child(photo.id).setValue(true)//.child("liked").setValue(true)
                 else {
                     liked = false
                     imageRef.child(photo.id).removeValue()

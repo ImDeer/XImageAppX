@@ -51,7 +51,7 @@
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:textAlignment="center"
-                android:textColor="#441697"
+                android:textColor="@color/purple"
                 android:textSize="24sp"
                 tools:text="123@gmail.com" />
 
@@ -79,7 +79,7 @@
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:textAlignment="center"
-                android:textColor="#441697"
+                android:textColor="@color/purple"
                 android:textSize="24sp"
                 tools:text="password" />
 
@@ -106,7 +106,7 @@
                 android:fontFamily="sans-serif-thin"
                 android:text="@string/don_t_have_an_account"
                 android:textAlignment="center"
-                android:textColor="#441697"
+                android:textColor="@color/purple"
                 android:textSize="18sp" />
 
             <TextView
@@ -117,7 +117,7 @@
                 android:paddingVertical="5dp"
                 android:text="@string/sign_up"
                 android:textAlignment="center"
-                android:textColor="#441697"
+                android:textColor="@color/purple"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 

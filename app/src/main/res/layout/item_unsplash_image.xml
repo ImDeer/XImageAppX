@@ -7,9 +7,9 @@
 
     <ImageView
         android:id="@+id/image_view"
-        android:contentDescription="@string/unsplash_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/unsplash_image" />
 
     <View
         android:layout_width="match_parent"
@@ -17,18 +17,27 @@
         android:layout_alignBottom="@id/image_view"
         android:background="@drawable/gradient" />
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_item_prof_image"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@id/image_view"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/default_profile_image" />
+
     <TextView
         android:id="@+id/text_view_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/image_view"
-        android:layout_margin="10dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="15dp"
         android:drawablePadding="4dp"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:textColor="@color/white"
-        app:drawableStartCompat="@drawable/ic_user"
         tools:text="username" />
 
     <ImageButton
@@ -39,9 +48,9 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="5dp"
         android:background="@null"
+        android:contentDescription="@string/like"
         android:padding="10dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_like"
-        android:contentDescription="@string/like" />
+        android:src="@drawable/ic_like" />
 
 </RelativeLayout>

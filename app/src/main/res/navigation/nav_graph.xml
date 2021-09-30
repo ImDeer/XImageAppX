@@ -27,7 +27,7 @@
         tools:layout="@layout/fragment_details">
         <argument
             android:name="photo"
-            app:argType="com.example.ximageappx.data.UnsplashPhoto" />
+            app:argType="com.example.ximageappx.data.PhotoPost" />
     </fragment>
     <fragment
         android:id="@+id/logInFragment"

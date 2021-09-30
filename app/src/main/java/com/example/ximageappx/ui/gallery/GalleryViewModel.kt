@@ -6,26 +6,39 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.example.ximageappx.data.UnsplashRepository
+import androidx.paging.liveData
+import com.example.ximageappx.data.FirebasePagingSource
+//import com.example.ximageappx.data.UnsplashRepository
+import com.google.firebase.firestore.FirebaseFirestore
 
-class GalleryViewModel @ViewModelInject constructor(
-    private val repository: UnsplashRepository,
-    @Assisted state: SavedStateHandle
-) : ViewModel() {
+class GalleryViewModel : ViewModel(){ //@ViewModelInject constructor(
+//    private val repository: UnsplashRepository,
 
-    private val currentQuery = state.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
+//    @Assisted state: SavedStateHandle
+//) : ViewModel() {
 
-    val photos = currentQuery.switchMap { queryString ->
-        repository.getSearchResults(queryString).cachedIn(viewModelScope)
-    }
+    val photos = Pager(PagingConfig(pageSize = 10, maxSize = 100, enablePlaceholders = false)) {
+        FirebasePagingSource(FirebaseFirestore.getInstance())
+    }.flow.cachedIn(viewModelScope)
 
-    fun searchPhotos(query:String){
-        currentQuery.value = query
-    }
 
-    companion object{
-        private const val CURRENT_QUERY = "current_query"
-        private const val DEFAULT_QUERY = ""
-    }
+//    private val currentQuery = state.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
+
+//    val photos =
+
+//    val photos = currentQuery.switchMap { queryString ->
+//        repository.getSearchResults(queryString).cachedIn(viewModelScope)
+//    }
+
+//    fun searchPhotos(query:String){
+//        currentQuery.value = query
+//    }
+//
+//    companion object{
+//        private const val CURRENT_QUERY = "current_query"
+//        private const val DEFAULT_QUERY = ""
+//    }
 }

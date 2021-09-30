@@ -7,5 +7,6 @@ import kotlinx.android.parcel.Parcelize
 data class User(
     var email: String = "",
     var login: String = "",
+//    var likedPosts: List<Pair<String, Boolean>> = emptyList(),
     var profilePhotoUrl : String = ""
 ) : Parcelable

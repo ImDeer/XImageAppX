@@ -1,7 +1,7 @@
 package com.example.ximageappx.ui.gallery
 
-import androidx.hilt.Assisted
-import androidx.hilt.lifecycle.ViewModelInject
+//import androidx.hilt.Assisted
+//import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap

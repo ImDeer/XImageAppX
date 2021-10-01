@@ -19,6 +19,13 @@
         <action
             android:id="@+id/action_galleryFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_galleryFragment_to_addPostFragment"
+            app:destination="@id/addPostFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -61,5 +68,21 @@
         <action
             android:id="@+id/action_registerFragment_to_galleryFragment"
             app:destination="@id/galleryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addPostFragment"
+        android:name="com.example.ximageappx.ui.AddPostFragment"
+        android:label="fragment_add_post"
+        tools:layout="@layout/fragment_add_post" >
+        <action
+            android:id="@+id/action_addPostFragment_to_galleryFragment"
+            app:destination="@id/galleryFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+        <argument
+            android:name="uri"
+            app:argType="android.net.Uri" />
     </fragment>
 </navigation>

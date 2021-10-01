@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentLoginBinding
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.fragment_login.*
+//import kotlinx.android.synthetic.main.fragment_login.*
 
 class LogInFragment : Fragment(R.layout.fragment_login) {
 
@@ -29,9 +29,9 @@ class LogInFragment : Fragment(R.layout.fragment_login) {
                 findNavController().navigate(action)
             }
 
-            bt_login.setOnClickListener {
-                val email = input_email.text.toString().trim { it <= ' ' }
-                val pass = input_pass.text.toString().trim { it <= ' ' }
+            btLogin.setOnClickListener {
+                val email = inputEmail.text.toString().trim { it <= ' ' }
+                val pass = inputPass.text.toString().trim { it <= ' ' }
 
                 if (email.isNotEmpty() && pass.isNotEmpty())
                     mAuth.signInWithEmailAndPassword(email, pass)

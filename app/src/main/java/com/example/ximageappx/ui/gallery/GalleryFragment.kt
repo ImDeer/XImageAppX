@@ -1,11 +1,16 @@
 package com.example.ximageappx.ui.gallery
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -23,6 +28,7 @@ import com.example.ximageappx.databinding.FragmentGalleryBinding
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+//import kotlinx.android.synthetic.main.fragment_add_post.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -38,6 +44,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
     private val binding get() = _binding!!
 
     private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+//    private val getContent: ActivityResultLauncher<String> =
+//        registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri: Uri? ->
+//
+//        }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -134,6 +145,27 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                //Image Uri will not be null for RESULT_OK
+                val uri: Uri = data?.data!!
+
+                val action = GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(uri)
+                findNavController().navigate(action)
+                Toast.makeText(context, "imageTaken", Toast.LENGTH_SHORT).show()
+            }
+            ImagePicker.RESULT_ERROR -> {
+                Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+
+                Toast.makeText(context, "Task Cancelled", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onItemClick(photo: PhotoPost) {
         val action = GalleryFragmentDirections.actionGalleryFragmentToDetailsFragment(photo)
         findNavController().navigate(action)
@@ -160,7 +192,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
 
         val addItem = menu.findItem(R.id.action_add)
         addItem.setOnMenuItemClickListener {
-
+            ImagePicker.with(this@GalleryFragment).crop()
+                .createIntent { intent -> startActivityForResult(intent, 0) }
             true
         }
 

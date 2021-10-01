@@ -5,6 +5,7 @@ import androidx.paging.PagingSource
 //import com.example.ximageappx.api.UnsplashApi
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.tasks.await
 import retrofit2.HttpException
@@ -21,7 +22,7 @@ class FirebasePagingSource(
             // Step 1
 //            Log.d("firebasePagingSource", "load")
 
-            val currentPage = params.key ?: db.collection("posts")
+            val currentPage = params.key ?: db.collection("posts").orderBy("created", Query.Direction.DESCENDING)
                 .limit(10)
                 .get()
                 .await()

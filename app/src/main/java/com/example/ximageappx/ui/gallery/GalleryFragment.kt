@@ -10,11 +10,15 @@ import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
@@ -23,15 +27,16 @@ import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.paging.LoadState
 import com.example.ximageappx.R
 import com.example.ximageappx.data.PhotoPost
-import com.example.ximageappx.data.UnsplashPhoto
+//import com.example.ximageappx.data.UnsplashPhoto
 import com.example.ximageappx.databinding.FragmentGalleryBinding
-import com.github.dhaval2404.imagepicker.ImagePicker
+//import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 //import kotlinx.android.synthetic.main.fragment_add_post.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.File
 
 
 @AndroidEntryPoint
@@ -45,11 +50,36 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
 
     private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-//    private val getContent: ActivityResultLauncher<String> =
-//        registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri: Uri? ->
-//
-//        }
+//    private lateinit var uri: Uri
 
+//TODO это код чтобы работать с получением картинок в отдельном классе, но он не работает, потому что фрагмент не приделан к активити -> невозможно получить активити чтобы туда ее передать
+//    private val imagePicker = ImagePicker(requireActivity().activityResultRegistry, this) { imageUri ->
+//        if (imageUri != null) {
+//            val action =
+//                GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(imageUri)
+//            findNavController().navigate(action)
+//        }
+//    }
+    private val getContent: ActivityResultLauncher<String> =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri: Uri? ->//.TakePicture()) { imageUri: Uri? ->
+            if (imageUri != null) {
+                val action =
+                    GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(imageUri)
+                findNavController().navigate(action)
+            } else
+                Toast.makeText(context, "Something went wrong, please try again later", Toast.LENGTH_SHORT).show()
+        }
+
+
+//    private val takePicture: ActivityResultLauncher<Uri> =
+//        registerForActivityResult(ActivityResultContracts.TakePicture()) { res: Boolean ->
+//            if (res != false) {
+//                val action =
+//                    GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(uri)
+//                findNavController().navigate(action)
+//            } else
+//                Toast.makeText(context, "Something went wrong, please try again later", Toast.LENGTH_SHORT).show()
+//        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -145,26 +175,25 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (resultCode) {
-            Activity.RESULT_OK -> {
-                //Image Uri will not be null for RESULT_OK
-                val uri: Uri = data?.data!!
-
-                val action = GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(uri)
-                findNavController().navigate(action)
-                Toast.makeText(context, "imageTaken", Toast.LENGTH_SHORT).show()
-            }
-            ImagePicker.RESULT_ERROR -> {
-                Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
-            }
-            else -> {
-
-                Toast.makeText(context, "Task Cancelled", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        when (resultCode) {
+//            Activity.RESULT_OK -> {
+//                //Image Uri will not be null for RESULT_OK
+//                val uri: Uri = data?.data!!
+//
+//                val action = GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(uri)
+//                findNavController().navigate(action)
+//                Toast.makeText(context, "imageTaken", Toast.LENGTH_SHORT).show()
+//            }
+//            ImagePicker.RESULT_ERROR -> {
+//                Toast.makeText(context, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+//            }
+//            else -> {
+//                Toast.makeText(context, "Task Cancelled", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
 
     override fun onItemClick(photo: PhotoPost) {
         val action = GalleryFragmentDirections.actionGalleryFragmentToDetailsFragment(photo)
@@ -182,7 +211,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
 //            viewModel.searchPhotos("")
 //            true
 //        }
-
         val profileItem = menu.findItem(R.id.action_profile)
         profileItem.setOnMenuItemClickListener {
             val action = GalleryFragmentDirections.actionGalleryFragmentToProfileFragment()
@@ -192,11 +220,18 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
 
         val addItem = menu.findItem(R.id.action_add)
         addItem.setOnMenuItemClickListener {
-            ImagePicker.with(this@GalleryFragment).crop()
-                .createIntent { intent -> startActivityForResult(intent, 0) }
+            getContent.launch("image/*")
+//            uri = Uri.fromFile(File.createTempFile("test", ".jpg"))
+//            uri = FileProvider.getUriForFile(requireContext(), context?.applicationContext?.packageName+".provider", File.createTempFile("test", ".jpg"))
+//            takePicture.launch(uri)
+//TODO тоже туда же
+//            imagePicker.pickImage()
+
+//            ImagePicker.with(this@GalleryFragment).crop()
+//                .createIntent { intent -> startActivityForResult(intent, 0) }
             true
         }
-
+//
 //        val searchItem = menu.findItem(R.id.action_search)
 //        val searchView = searchItem.actionView as SearchView
 //
@@ -213,8 +248,6 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
 //                return true
 //            }
 //        })
-
-
     }
 
     override fun onDestroyView() {
@@ -222,3 +255,34 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
         _binding = null
     }
 }
+
+// TODO еще раз туда же
+//class ImagePicker(
+//    private val activityResultRegistry: ActivityResultRegistry,
+//    private val lifecycleOwner: LifecycleOwner,
+//    private val callback: (imageUri: Uri?) -> Unit
+//) {
+//
+//    private val getContent: ActivityResultLauncher<String> =
+//        activityResultRegistry.register(
+//            REGISTRY_KEY,
+//            lifecycleOwner,
+//            ActivityResultContracts.GetContent(),
+//            callback
+//        ) //{ imageUri: Uri? ->
+////            if (imageUri != null) {
+////                val action =
+////                    GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(imageUri)
+//////                findNavController().navigate(action)
+////            } //else
+////                Toast.makeText(context, "Something went wrong, please try again later", Toast.LENGTH_SHORT)
+////        }
+//
+//    fun pickImage() {
+//        getContent.launch("image/*")
+//    }
+//
+//    private companion object {
+//        private const val REGISTRY_KEY = "ImagePicker"
+//    }
+//}

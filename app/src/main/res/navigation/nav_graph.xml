@@ -52,7 +52,7 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.ximageappx.ui.ProfileFragment"
+        android:name="com.example.ximageappx.ui.profile.ProfileFragment"
         android:label="@string/profile"
         tools:layout="@layout/fragment_profile" />
     <fragment

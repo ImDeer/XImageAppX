@@ -12,43 +12,26 @@ import com.bumptech.glide.Glide
 import com.example.ximageappx.R
 import com.example.ximageappx.data.User
 import com.example.ximageappx.databinding.FragmentProfileBinding
-import com.example.ximageappx.services.auth.IAuthService
-import com.example.ximageappx.services.firebase.IDatabaseService
-import javax.inject.Inject
+import com.example.ximageappx.services.IFirebaseService
+import com.example.ximageappx.showToast
 
 
 class ProfileFragment constructor(
-    private val databaseService: IDatabaseService,
-    private val authService: IAuthService
+    private val firebaseService: IFirebaseService
 ) : Fragment(R.layout.fragment_profile) {
-    // = FirebaseAuthService()
-     //= FirebaseDatabaseService()
-
-//    @Inject
-//    lateinit var databaseService: IDatabaseService
-//    @Inject
-//    lateinit var authService: IAuthService
-
 
     private val getContent: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri: Uri? ->//.TakePicture()) { imageUri: Uri? ->
             if (imageUri != null)
-                databaseService.uploadImageToFirebaseStorage(imageUri) {
-                    Toast.makeText(context, "Photo successfully uploaded", Toast.LENGTH_SHORT)
-                        .show()
+                firebaseService.uploadImageToFirebaseStorage(imageUri) {
+                    context?.showToast("Photo successfully uploaded")
                 }
             else
-                Toast.makeText(
-                    context,
-                    "Something went wrong, please try again later",
-                    Toast.LENGTH_SHORT
-                ).show()
+                context?.showToast("Something went wrong, please try again later")
         }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         lateinit var _user: User
 
@@ -56,7 +39,7 @@ class ProfileFragment constructor(
 
         binding.apply {
 
-            databaseService.updateUser { user ->
+            firebaseService.updateUser { user ->
                 inputProfEmail.setText(user.email)
                 inputProfLogin.setText(user.login)
                 Glide.with(profileImage).load(user.profilePhotoUrl)
@@ -66,20 +49,18 @@ class ProfileFragment constructor(
 
             btSave.setOnClickListener {
                 if (inputProfLogin.text.toString() != _user.login) {
-                    databaseService.setUserLogin(inputProfLogin.text.toString())
-                    Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+                    firebaseService.setUserLogin(inputProfLogin.text.toString())
+                   context?.showToast("Saved")
                 }
             }
 
             btResetPw.setOnClickListener {
-                authService.resetPass()
-                //TODO make toast message
-                Toast.makeText(context, "Password reset email is sent to your ", Toast.LENGTH_SHORT)
-                    .show()
+                firebaseService.resetPass()
+                context?.showToast("A password reset link was sent to your email")
             }
 
             btExit.setOnClickListener {
-                authService.signOut()
+                firebaseService.signOut()
                 findNavController().navigateUp()
             }
 

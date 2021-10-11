@@ -1,4 +1,4 @@
-package com.example.ximageappx.services.auth
+package com.example.ximageappx.services
 
 import java.lang.Exception
 

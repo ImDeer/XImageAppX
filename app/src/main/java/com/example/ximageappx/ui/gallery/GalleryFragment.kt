@@ -1,7 +1,8 @@
 package com.example.ximageappx.ui.gallery
 
-import android.app.Activity
-import android.content.Intent
+//import com.example.ximageappx.data.UnsplashPhoto
+//import com.github.dhaval2404.imagepicker.ImagePicker
+//import kotlinx.android.synthetic.main.fragment_add_post.*
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,37 +11,27 @@ import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.paging.LoadState
 import com.example.ximageappx.R
 import com.example.ximageappx.data.PhotoPost
-//import com.example.ximageappx.data.UnsplashPhoto
 import com.example.ximageappx.databinding.FragmentGalleryBinding
-//import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.firebase.auth.FirebaseAuth
+import com.example.ximageappx.services.IFirebaseService
 import dagger.hilt.android.AndroidEntryPoint
-//import kotlinx.android.synthetic.main.fragment_add_post.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.io.File
 
 
 @AndroidEntryPoint
-class GalleryFragment : Fragment(R.layout.fragment_gallery),
+class GalleryFragment constructor(
+    private val firebaseService: IFirebaseService
+) : Fragment(R.layout.fragment_gallery),
     UnsplashPhotoAdapter.OnItemClickListener {
 
     private val viewModel by viewModels<GalleryViewModel>()
@@ -48,11 +39,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
 
-    private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+//    private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
 //    private lateinit var uri: Uri
 
-//TODO это код чтобы работать с получением картинок в отдельном классе, но он не работает, потому что фрагмент не приделан к активити -> невозможно получить активити чтобы туда ее передать
+    //TODO это код чтобы работать с получением картинок в отдельном классе, но он не работает, потому что фрагмент не приделан к активити -> невозможно получить активити чтобы туда ее передать
 //    private val imagePicker = ImagePicker(requireActivity().activityResultRegistry, this) { imageUri ->
 //        if (imageUri != null) {
 //            val action =
@@ -67,7 +58,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
                     GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(imageUri)
                 findNavController().navigate(action)
             } else
-                Toast.makeText(context, "Something went wrong, please try again later", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Something went wrong, please try again later",
+                    Toast.LENGTH_SHORT
+                ).show()
         }
 
 
@@ -85,11 +80,12 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
         super.onViewCreated(view, savedInstanceState)
         Log.d("galleryFragment", "onViewCreated")
 
-        if (mAuth.currentUser == null) {
+        if (firebaseService.getCurrentUser() == null) {
             Log.d("galleryFragment", "currentUserNull")
             val action = GalleryFragmentDirections.actionGalleryFragmentToLogInFragment()
             findNavController().navigate(action)
         } else {
+
 
             _binding = FragmentGalleryBinding.bind(view)
 
@@ -112,11 +108,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
                 Log.d("galleryFragment", "viewModel.photos.collect")
 
                 viewModel.photos.collect {
-                    Log.d("galleryFragment", "submitData")
-
                     adapter.submitData(it)//viewLifecycleOwner.lifecycle, it)//(it)
-                    Log.d("galleryFragment", "submitData(it)")
-
                 }
             }
 
@@ -150,9 +142,8 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery),
                     binding.apply {
                         progressBar.isVisible = loadState.source.refresh is LoadState.Loading
                         recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
-                        buttonRetry.isVisible =
-                            loadState.source.refresh is LoadState.Error //&& !loadState.append.endOfPaginationReached
-                        textViewError.isVisible = loadState.source.refresh is LoadState.Error
+                        buttonRetry.isVisible = false//loadState.source.refresh is LoadState.Error && !loadState.append.endOfPaginationReached
+                        textViewError.isVisible = false//loadState.source.refresh is LoadState.Error
 
                         // empty view
                         if (loadState.source.refresh is LoadState.NotLoading &&

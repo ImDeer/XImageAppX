@@ -33,7 +33,11 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val binding =
-            ItemUnsplashImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemUnsplashImageBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
 
         return PhotoViewHolder(binding)
     }
@@ -77,8 +81,9 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
 ////            user.child(photoCreator).addValueEventListener(userListener)
 //    }
 
-    inner class PhotoViewHolder(private val binding: ItemUnsplashImageBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class PhotoViewHolder(
+        private val binding: ItemUnsplashImageBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         var liked = false
 

@@ -2,8 +2,8 @@ package com.example.ximageappx.dependencyinjection
 
 import com.example.ximageappx.services.auth.FirebaseAuthService
 import com.example.ximageappx.services.auth.IAuthService
-import com.example.ximageappx.services.firebase.FirebaseDatabaseService
-import com.example.ximageappx.services.firebase.IDatabaseService
+import com.example.ximageappx.services.FirebaseService
+import com.example.ximageappx.services.IFirebaseService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,11 +22,12 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideIDatabaseService(authService: FirebaseAuthService): IDatabaseService = FirebaseDatabaseService(authService)
+    fun provideIDatabaseService(): IFirebaseService = FirebaseService()//authService)
+//    fun provideIDatabaseService(authService: FirebaseAuthService): IFirebaseService = FirebaseService()//authService)
 
-    @Singleton
-    @Provides
-    fun provideIAuthService(databaseService: FirebaseDatabaseService): IAuthService = FirebaseAuthService(databaseService)
+//    @Singleton
+//    @Provides
+//    fun provideIAuthService(databaseService: FirebaseService): IAuthService = FirebaseAuthService(databaseService)
 
 
 }

@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,32 +18,30 @@ import com.bumptech.glide.request.target.Target
 import com.example.ximageappx.MainActivity
 import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentDetailsBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.example.ximageappx.services.IFirebaseService
+import com.example.ximageappx.showToast
 import java.io.IOException
 
 
-class DetailsFragment : Fragment(R.layout.fragment_details) {
+class DetailsFragment constructor(
+    private val firebaseService: IFirebaseService
+) : Fragment(R.layout.fragment_details) {
 
     private val args by navArgs<DetailsFragmentArgs>()
 
-    private val uid = FirebaseAuth.getInstance().currentUser?.uid
+//    private val uid = FirebaseAuth.getInstance().currentUser?.uid
 
     // loads details fragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userRef = Firebase.database.getReference("users")
-        val imageRef =
-            Firebase.database.getReference("likes/$uid")//${args.photo.id}/liked")
+//        val userRef = Firebase.database.getReference("users")
+//        val imageRef =
+//            Firebase.database.getReference("likes/$uid")//${args.photo.id}/liked")
 
 //        lateinit var mUser: DatabaseReference
 
-        var liked = false
+        var _liked = false
 
         val binding = FragmentDetailsBinding.bind(view)
 
@@ -108,7 +105,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 //                ivItemProfImage.setImageDrawable("@drawable/default_profile_image")
 
             textViewCreator.apply {
-//                text = "Photo by $login"//.name} on Unsplash"
                 setOnClickListener {
                     context.startActivity(intent)
                 }
@@ -116,53 +112,63 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
             }
 
-            userRef.child(photo.user)
-                .addValueEventListener(object : ValueEventListener {
+// 11102021
+//            userRef.child(photo.user)
+//                .addValueEventListener(object : ValueEventListener {
+//
+//                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                        // This method is called once with the initial value and again
+//                        // whenever data at this location is updated.
+//                        if (dataSnapshot.exists())// && dataSnapshot.value == true
+//                        {
+            firebaseService.listenToPhotoCreator(photo.user) { user ->
+                val login = user.login
+                val profilePhotoUrl = user.profilePhotoUrl
+                textViewCreator.text = "Photo by $login"
+                (activity as MainActivity).supportActionBar?.title = login
+                if (profilePhotoUrl != "null")
+                    Glide.with(ivItemProfImage).load(profilePhotoUrl)
+                        .error(R.drawable.default_profile_image).circleCrop()
+                        .into(ivItemProfImage)
+                else
+                    ivItemProfImage.setImageResource(R.drawable.default_profile_image)
+            }
+//                        }
+//                    }
+//
+//                    override fun onCancelled(error: DatabaseError) {}
+//
+//                })
 
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        // This method is called once with the initial value and again
-                        // whenever data at this location is updated.
-                        if (dataSnapshot.exists())// && dataSnapshot.value == true
-                        {
-                            val login = dataSnapshot.child("login").value.toString()
-                            val profilePhotoUrl =
-                                dataSnapshot.child("profilePhotoUrl").value.toString()
-                            textViewCreator.text = "Photo by $login"
-                            (activity as MainActivity).supportActionBar?.title = login
-                            if (profilePhotoUrl != "null")
-                                Glide.with(ivItemProfImage).load(profilePhotoUrl)
-                                    .error(R.drawable.default_profile_image).circleCrop()
-                                    .into(ivItemProfImage)
-                            else
-                                ivItemProfImage.setImageResource(R.drawable.default_profile_image)
-                        }
-                    }
 
-                    override fun onCancelled(error: DatabaseError) {}
-
-                })
-
-
-
-            imageRef.child(photo.id).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
-                    if (dataSnapshot.exists())
-                        liked = dataSnapshot.value == true//.child("liked").value == true
-
-                    if (liked)
-                        likeButton.setImageResource(R.drawable.ic_like_liked)
-                    else
-                        likeButton.setImageResource(R.drawable.ic_like)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Failed to read value
-                    Toast.makeText(context, "Oops", Toast.LENGTH_SHORT).show()
-
-                }
+            firebaseService.getLikedState(photoId = photo.id, callback = { liked ->
+                if (liked)
+                    likeButton.setImageResource(R.drawable.ic_like_liked)
+                else
+                    likeButton.setImageResource(R.drawable.ic_like)
+            }, callback2 = {
+                context?.showToast("Oops")
             })
+// 11102021
+//            imageRef.child(photo.id).addValueEventListener(object : ValueEventListener {
+//                override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                    // This method is called once with the initial value and again
+//                    // whenever data at this location is updated.
+//                    if (dataSnapshot.exists())
+//                        liked = dataSnapshot.value == true//.child("liked").value == true
+//
+//                    if (liked)
+//                        likeButton.setImageResource(R.drawable.ic_like_liked)
+//                    else
+//                        likeButton.setImageResource(R.drawable.ic_like)
+//                }
+//
+//                override fun onCancelled(error: DatabaseError) {
+//                    // Failed to read value
+//                    context?.showToast("Oops")
+//
+//                }
+//            })
 
             // share photo (link)
             shareButton.setOnClickListener {
@@ -199,29 +205,33 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
             // change liked state
             likeButton.setOnClickListener {
-                if (!liked)
-                    imageRef.child(photo.id).setValue(true)//.child("liked").setValue(true)
-                else {
-                    liked = false
-                    imageRef.child(photo.id).removeValue()
-                }
+                firebaseService.setLikedValue(photo.id, _liked)
+                _liked = !_liked
+                if (_liked)
+                    likeButton.setImageResource(R.drawable.ic_like_liked)
+                else
+                    likeButton.setImageResource(R.drawable.ic_like)
+//                if (!liked)
+//                    imageRef.child(photo.id).setValue(true)//.child("liked").setValue(true)
+//                else {
+//                    liked = false
+//                    imageRef.child(photo.id).removeValue()
+//                }
 
             }
 
             // set image as a wallpaper
             wallpaperButton.setOnClickListener {
-                Toast.makeText(context, "Wait", Toast.LENGTH_SHORT).show()
+                context?.showToast("Wait")
 
                 val bmap = imageView.drawable.toBitmap()
                 val m = WallpaperManager.getInstance(context)
 
                 try {
                     m.setBitmap(bmap)
-                    Toast.makeText(context, "WallPaper set", Toast.LENGTH_SHORT).show()
+                    context?.showToast("WallPaper set")
                 } catch (e: IOException) {
-
-                    Toast.makeText(context, "Setting WallPaper Failed!!", Toast.LENGTH_SHORT)
-                        .show()
+                    context?.showToast("Setting WallPaper Failed!!")
                 }
             }
         }

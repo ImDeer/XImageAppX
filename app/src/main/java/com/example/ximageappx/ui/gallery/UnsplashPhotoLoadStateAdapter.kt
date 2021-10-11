@@ -29,7 +29,7 @@ class UnsplashPhotoLoadStateAdapter(private val retry: () -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.buttonRetry.setOnClickListener{
+            binding.buttonRetry.setOnClickListener {
                 retry.invoke()
             }
         }
@@ -37,8 +37,10 @@ class UnsplashPhotoLoadStateAdapter(private val retry: () -> Unit) :
         fun bind(loadState: LoadState) {
             binding.apply {
                 progressBar.isVisible = loadState is LoadState.Loading
-                buttonRetry.isVisible = loadState !is LoadState.Loading
-                textViewError.isVisible = loadState !is LoadState.Loading
+                buttonRetry.isVisible =
+                    loadState is LoadState.NotLoading //&& !loadState.endOfPaginationReached
+                textViewError.isVisible =
+                    loadState is LoadState.NotLoading //&& !loadState.endOfPaginationReached
             }
         }
     }

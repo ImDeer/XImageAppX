@@ -2,12 +2,14 @@ package com.example.ximageappx.ui
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentAddPostBinding
 import com.example.ximageappx.services.IFirebaseService
+import com.example.ximageappx.showToast
 import javax.inject.Inject
 
 class AddPostFragment @Inject constructor(
@@ -28,21 +30,16 @@ class AddPostFragment @Inject constructor(
             ivNewImage.setImageURI(uri)
 
             btAddPost.setOnClickListener {
-                Toast.makeText(context, "btaddClicked", Toast.LENGTH_SHORT).show()
+                progressBar.isVisible = true
+                val description = inputDescription.text.toString()
+                firebaseService.uploadImageToFirebaseStorage(uri) {
+                    firebaseService.createPost(it, description)
+                    context?.showToast("postAdded")
+                    val action = AddPostFragmentDirections.actionAddPostFragmentToGalleryFragment()
+                    progressBar.isVisible = false
+                    findNavController().navigate(action)
+                }
             }
-
         }
     }
-//    private fun uploadImageToFirebaseStorage(uri: Uri?) {
-//        if (uri == null) return
-//        val filename = UUID.randomUUID().toString()
-//        val mStorage = FirebaseStorage.getInstance().getReference("/images/$filename")
-//        mStorage.putFile(uri).addOnSuccessListener {
-//            Toast.makeText(context, "Photo successfully uploaded", Toast.LENGTH_SHORT).show()
-//            mStorage.downloadUrl.addOnSuccessListener {
-////                mUser.child("profilePhotoUrl").setValue(it.toString())
-//            }
-//        }
-//    }
-
 }

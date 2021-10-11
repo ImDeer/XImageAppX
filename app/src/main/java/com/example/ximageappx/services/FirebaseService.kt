@@ -2,6 +2,7 @@ package com.example.ximageappx.services
 
 import android.net.Uri
 import android.util.Log
+import com.example.ximageappx.data.PhotoPost
 import com.example.ximageappx.data.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -11,9 +12,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.scopes.ServiceScoped
+import java.sql.Timestamp
+import java.time.Instant
 import java.util.*
 
 @ServiceScoped
@@ -27,19 +31,17 @@ class FirebaseService : IFirebaseService {
 
     private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    private val dbRef =
-        Firebase.database.getReference("/")//users")// + getCurrentUser()!!.uid)
+    private val mDB = Firebase.database.getReference("/")
 
-//    private val likesRef = Firebase.database.getReference("likes")
+    private val mFirestore = FirebaseFirestore.getInstance().collection("posts")
 
-    //region dbServicePart
+    // region firebaseDB
     override fun setUserLogin(login: String) {
-        dbRef.child("users").child(getCurrentUser()!!.uid).child("login").setValue(login)
+        mDB.child("users").child(getCurrentUser()!!.uid).child("login").setValue(login)
     }
 
-
     override fun updateUser(callback: (user: User) -> Unit) {
-        dbRef.child("users").child(getCurrentUser()!!.uid)
+        mDB.child("users").child(getCurrentUser()!!.uid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val user = dataSnapshot.getValue(User::class.java)!!
@@ -55,27 +57,30 @@ class FirebaseService : IFirebaseService {
             })
     }
 
-    override fun uploadImageToFirebaseStorage(uri: Uri?, callback: () -> Unit) {
+    override fun setProfilePhoto(uri: Uri?) {
+        mDB.child("users").child(getCurrentUser()!!.uid).child("profilePhotoUrl")
+            .setValue(uri.toString())
+    }
+
+    override fun uploadImageToFirebaseStorage(uri: Uri?, callback: (uri: Uri) -> Unit) {
         if (uri == null) return
         val filename = UUID.randomUUID().toString()
         val mStorage = FirebaseStorage.getInstance().getReference("/images/$filename")
         mStorage.putFile(uri).addOnSuccessListener {
-            callback()
             mStorage.downloadUrl.addOnSuccessListener {
-                dbRef.child("users").child(getCurrentUser()!!.uid).child("profilePhotoUrl")
-                    .setValue(it.toString())
+                callback(it)
             }
         }
     }
 
     override fun createUserWithEmailAndLogin(email: String, login: String) {
-        dbRef.child("users").child(getCurrentUser()!!.uid).child("login").setValue(login)
-        dbRef.child("users").child(getCurrentUser()!!.uid).child("email").setValue(email)
+        mDB.child("users").child(getCurrentUser()!!.uid).child("login").setValue(login)
+        mDB.child("users").child(getCurrentUser()!!.uid).child("email").setValue(email)
 
     }
 
     override fun listenToPhotoCreator(uid: String, callback: (user: User) -> Unit) {
-        dbRef.child("users").child(uid)
+        mDB.child("users").child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     // This method is called once with the initial value and again
@@ -96,9 +101,9 @@ class FirebaseService : IFirebaseService {
 
     override fun setLikedValue(photoId: String, liked: Boolean) {
         if (!liked)
-            dbRef.child("likes").child(getCurrentUser()!!.uid).child(photoId).setValue(true)
+            mDB.child("likes").child(getCurrentUser()!!.uid).child(photoId).setValue(true)
         else
-            dbRef.child("likes").child(getCurrentUser()!!.uid).child(photoId).removeValue()
+            mDB.child("likes").child(getCurrentUser()!!.uid).child(photoId).removeValue()
     }
 
     override fun getLikedState(
@@ -106,7 +111,7 @@ class FirebaseService : IFirebaseService {
         callback: (liked: Boolean) -> Unit,
         callback2: () -> Unit
     ) {
-        dbRef.child("likes").child(getCurrentUser()!!.uid).child(photoId)
+        mDB.child("likes").child(getCurrentUser()!!.uid).child(photoId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     // This method is called once with the initial value and again
@@ -122,16 +127,24 @@ class FirebaseService : IFirebaseService {
 
     }
 
-    //endregion
+    // endregion
 
-    //region authServicePart
-    override fun getCurrentUser(): FirebaseUser? {
-        return mAuth.currentUser
+    override fun createPost(uri: Uri, description: String) {
+        val newPostRef = mFirestore.document()
+        val newPost = PhotoPost(
+            newPostRef.id,
+            description,
+            Timestamp(System.currentTimeMillis()).toString(),
+            getCurrentUser()!!.uid,
+            uri.toString()
+        )
+        newPostRef.set(newPost)
     }
 
-    override fun signOut() {
-        mAuth.signOut()
-    }
+    // region authServicePart
+    override fun getCurrentUser(): FirebaseUser? = mAuth.currentUser
+
+    override fun signOut() = mAuth.signOut()
 
     override fun resetPass() {
         mAuth.sendPasswordResetEmail(getCurrentUser()!!.email!!)
@@ -151,7 +164,6 @@ class FirebaseService : IFirebaseService {
                 throw RegisterFailedException("Register failed!")
             }
         }
-
     }
 
     override fun authenticate(

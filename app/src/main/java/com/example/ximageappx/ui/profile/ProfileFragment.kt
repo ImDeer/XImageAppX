@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.ximageappx.MainActivity
 import com.example.ximageappx.R
 import com.example.ximageappx.data.User
 import com.example.ximageappx.databinding.FragmentProfileBinding
@@ -24,6 +25,7 @@ class ProfileFragment constructor(
         registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri: Uri? ->//.TakePicture()) { imageUri: Uri? ->
             if (imageUri != null)
                 firebaseService.uploadImageToFirebaseStorage(imageUri) {
+                    firebaseService.setProfilePhoto(it)
                     context?.showToast("Photo successfully uploaded")
                 }
             else
@@ -42,6 +44,7 @@ class ProfileFragment constructor(
             firebaseService.updateUser { user ->
                 inputProfEmail.setText(user.email)
                 inputProfLogin.setText(user.login)
+//                (activity as MainActivity).supportActionBar?.title = user.login
                 Glide.with(profileImage).load(user.profilePhotoUrl)
                     .error(R.drawable.default_profile_image).circleCrop().into(profileImage)
                 _user = user

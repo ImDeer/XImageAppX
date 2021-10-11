@@ -29,17 +29,9 @@ class DetailsFragment constructor(
 
     private val args by navArgs<DetailsFragmentArgs>()
 
-//    private val uid = FirebaseAuth.getInstance().currentUser?.uid
-
     // loads details fragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        val userRef = Firebase.database.getReference("users")
-//        val imageRef =
-//            Firebase.database.getReference("likes/$uid")//${args.photo.id}/liked")
-
-//        lateinit var mUser: DatabaseReference
 
         var _liked = false
 
@@ -49,7 +41,6 @@ class DetailsFragment constructor(
         binding.apply {
             val photo = args.photo
 
-//            mUser = Firebase.database.getReference("users/${photo.user}")
 
             Glide.with(this@DetailsFragment)
                 .load(photo.url)//s.full)
@@ -96,14 +87,6 @@ class DetailsFragment constructor(
             val uri = Uri.parse(photo.url)//.links.html)
             val intent = Intent(Intent.ACTION_VIEW, uri)
 
-//            val login = mUser.child("login").toString()
-//            (activity as MainActivity).supportActionBar?.title = login//.username
-
-//            if (mUser.profilePhotoUrl != "")
-//                ivItemProfImage.setImageURI(mUser.profilePhotoUrl.toUri())
-//            else
-//                ivItemProfImage.setImageDrawable("@drawable/default_profile_image")
-
             textViewCreator.apply {
                 setOnClickListener {
                     context.startActivity(intent)
@@ -112,20 +95,11 @@ class DetailsFragment constructor(
 
             }
 
-// 11102021
-//            userRef.child(photo.user)
-//                .addValueEventListener(object : ValueEventListener {
-//
-//                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                        // This method is called once with the initial value and again
-//                        // whenever data at this location is updated.
-//                        if (dataSnapshot.exists())// && dataSnapshot.value == true
-//                        {
             firebaseService.listenToPhotoCreator(photo.user) { user ->
                 val login = user.login
                 val profilePhotoUrl = user.profilePhotoUrl
                 textViewCreator.text = "Photo by $login"
-                (activity as MainActivity).supportActionBar?.title = login
+//                (activity as MainActivity).supportActionBar?.title = login
                 if (profilePhotoUrl != "null")
                     Glide.with(ivItemProfImage).load(profilePhotoUrl)
                         .error(R.drawable.default_profile_image).circleCrop()
@@ -133,13 +107,6 @@ class DetailsFragment constructor(
                 else
                     ivItemProfImage.setImageResource(R.drawable.default_profile_image)
             }
-//                        }
-//                    }
-//
-//                    override fun onCancelled(error: DatabaseError) {}
-//
-//                })
-
 
             firebaseService.getLikedState(photoId = photo.id, callback = { liked ->
                 if (liked)
@@ -149,58 +116,15 @@ class DetailsFragment constructor(
             }, callback2 = {
                 context?.showToast("Oops")
             })
-// 11102021
-//            imageRef.child(photo.id).addValueEventListener(object : ValueEventListener {
-//                override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                    // This method is called once with the initial value and again
-//                    // whenever data at this location is updated.
-//                    if (dataSnapshot.exists())
-//                        liked = dataSnapshot.value == true//.child("liked").value == true
-//
-//                    if (liked)
-//                        likeButton.setImageResource(R.drawable.ic_like_liked)
-//                    else
-//                        likeButton.setImageResource(R.drawable.ic_like)
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//                    // Failed to read value
-//                    context?.showToast("Oops")
-//
-//                }
-//            })
 
             // share photo (link)
             shareButton.setOnClickListener {
                 val shareIntent = Intent()
                 shareIntent.action = Intent.ACTION_SEND
                 shareIntent.putExtra(Intent.EXTRA_TEXT, photo.url)//s.full)
-//                shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
                 shareIntent.type = "text/plain"
-//                shareIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);
-//                context?.startActivities(arrayOf(Intent.createChooser(shareIntent, "Share with")))
 
                 startActivity(Intent.createChooser(shareIntent, "Share To:"))
-
-//                val icon: Bitmap = mBitmap
-//                val share = Intent(Intent.ACTION_SEND)
-//                share.type = "image/jpeg"
-//                val bytes = ByteArrayOutputStream()
-//                icon.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-//                val f =
-//                    File(Environment.getExternalStorageDirectory() + File.separator.toString() + "temporary_file.jpg")
-//                try {
-//                    f.createNewFile()
-//                    val fo = FileOutputStream(f)
-//                    fo.write(bytes.toByteArray())
-//                } catch (e: IOException) {
-//                    e.printStackTrace()
-//                }
-//                share.putExtra(
-//                    Intent.EXTRA_STREAM,
-//                    Uri.parse("file:///sdcard/temporary_file.jpg")
-//                )
-//                startActivity(Intent.createChooser(share, "Share Image"))
             }
 
             // change liked state
@@ -211,13 +135,6 @@ class DetailsFragment constructor(
                     likeButton.setImageResource(R.drawable.ic_like_liked)
                 else
                     likeButton.setImageResource(R.drawable.ic_like)
-//                if (!liked)
-//                    imageRef.child(photo.id).setValue(true)//.child("liked").setValue(true)
-//                else {
-//                    liked = false
-//                    imageRef.child(photo.id).removeValue()
-//                }
-
             }
 
             // set image as a wallpaper

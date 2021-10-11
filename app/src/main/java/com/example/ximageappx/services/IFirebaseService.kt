@@ -8,33 +8,34 @@ import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.AndroidEntryPoint
 
 interface IFirebaseService {
+    // region firebaseDB
     fun setUserLogin(login: String)
-
     fun updateUser(callback: (user: User) -> Unit)
-
-    fun uploadImageToFirebaseStorage(uri: Uri?, callback: () -> Unit)
-
+    fun setProfilePhoto(uri: Uri?)
+    fun uploadImageToFirebaseStorage(uri: Uri?, callback: (uri: Uri) -> Unit)
     fun createUserWithEmailAndLogin(email: String, login: String)
+    fun listenToPhotoCreator(uid: String, callback: (user: User) -> Unit)
+    fun setLikedValue(photoId: String, liked: Boolean)
+    fun getLikedState(
+        photoId: String,
+        callback: (liked: Boolean) -> Unit,
+        callback2: () -> Unit
+    )
+    // endregion
 
-    fun authenticate(email: String, password: String, callback: (Task<AuthResult>) -> Unit)
+    // region fi
+    fun createPost(uri: Uri, description: String)
+
+    // region firebaseAuth
+    fun getCurrentUser(): FirebaseUser?
+    fun signOut()
+    fun resetPass()
     fun register(
         email: String,
         password: String,
         login: String,
         callback: () -> Unit
     )
-
-    fun getLikedState(
-        photoId: String,
-        callback: (liked: Boolean) -> Unit,
-        callback2: () -> Unit
-    )
-
-    fun setLikedValue(photoId: String, liked: Boolean)
-
-
-    fun getCurrentUser(): FirebaseUser?
-    fun signOut()
-    fun resetPass()
-    fun listenToPhotoCreator(uid: String, callback: (user: User) -> Unit)
+    fun authenticate(email: String, password: String, callback: (Task<AuthResult>) -> Unit)
+    // endregion
 }

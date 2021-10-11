@@ -7,13 +7,6 @@
         android:icon="@drawable/ic_add"
         android:title="@string/add"
         app:showAsAction="ifRoom|collapseActionView" />
-    <!--        app:actionViewClass="androidx.appcompat.widget.SearchView"-->
-
-    <item
-        android:id="@+id/action_home"
-        android:icon="@drawable/ic_home"
-        android:title="@string/home"
-        app:showAsAction="ifRoom|collapseActionView"/>
 
     <item
         android:id="@+id/action_profile"

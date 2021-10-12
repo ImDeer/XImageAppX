@@ -30,12 +30,14 @@ interface IFirebaseService {
     fun getCurrentUser(): FirebaseUser?
     fun signOut()
     fun resetPass()
+    fun checkEmailNew(email: String): Boolean
     fun register(
         email: String,
         password: String,
         login: String,
         callback: () -> Unit
     )
+
     fun authenticate(email: String, password: String, callback: (Task<AuthResult>) -> Unit)
     // endregion
 }

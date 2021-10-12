@@ -1,24 +1,22 @@
 package com.example.ximageappx.ui.gallery
 
-//import com.example.ximageappx.data.UnsplashPhoto
-//import com.github.dhaval2404.imagepicker.ImagePicker
-//import kotlinx.android.synthetic.main.fragment_add_post.*
+import android.Manifest
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import com.example.ximageappx.MainActivity
+import com.example.ximageappx.BuildConfig
 import com.example.ximageappx.R
 import com.example.ximageappx.data.PhotoPost
 import com.example.ximageappx.databinding.FragmentGalleryBinding
@@ -28,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.File
 
 
 @AndroidEntryPoint
@@ -40,16 +39,6 @@ class GalleryFragment constructor(
 
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
-
-    private val getContent: ActivityResultLauncher<String> =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { imageUri: Uri? ->//.TakePicture()) { imageUri: Uri? ->
-            if (imageUri != null) {
-                val action =
-                    GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(imageUri)
-                findNavController().navigate(action)
-            } else
-                context?.showToast("Something went wrong, please try again later")
-        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -112,7 +101,6 @@ class GalleryFragment constructor(
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-
         inflater.inflate(R.menu.menu_gallery, menu)
 
         val profileItem = menu.findItem(R.id.action_profile)
@@ -122,9 +110,21 @@ class GalleryFragment constructor(
             true
         }
 
+        val addGalleryItem = menu.findItem(R.id.action_add_gallery)
+        addGalleryItem.setOnMenuItemClickListener {
+            if (!hasStoragePermission())
+                requestStoragePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            else
+                selectImageFromGallery()
+            true
+        }
+
         val addItem = menu.findItem(R.id.action_add)
         addItem.setOnMenuItemClickListener {
-            getContent.launch("image/*")
+            if (!hasCameraPermission())
+                requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            else
+                takePicture()
             true
         }
     }
@@ -132,5 +132,78 @@ class GalleryFragment constructor(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun hasCameraPermission() = ContextCompat.checkSelfPermission(
+        requireContext(),
+        Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
+
+    private fun hasStoragePermission() = ContextCompat.checkSelfPermission(
+        requireContext(),
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    ) == PackageManager.PERMISSION_GRANTED
+
+    private val requestCameraPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (!isGranted) {
+                context?.showToast("Please allow camera usage in your settings.")
+            } else {
+                takePicture()
+            }
+        }
+
+    private val requestStoragePermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (!isGranted) {
+                context?.showToast("Please allow storage usage in your settings.")
+            } else {
+                selectImageFromGallery()
+            }
+        }
+
+    private val takeImageResult =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
+            if (isSuccess) {
+                latestTmpUri?.let { uri ->
+                    val action =
+                        GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(uri)
+                    findNavController().navigate(action)
+                }
+            }
+        }
+    private val selectImageFromGalleryResult =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                val action =
+                    GalleryFragmentDirections.actionGalleryFragmentToAddPostFragment(it)
+                findNavController().navigate(action)
+            }
+        }
+
+    private var latestTmpUri: Uri? = null
+
+    private fun takePicture() {
+        lifecycleScope.launchWhenStarted {
+            getTmpFileUri().let { uri ->
+                latestTmpUri = uri
+                takeImageResult.launch(uri)
+            }
+        }
+    }
+
+    private fun selectImageFromGallery() = selectImageFromGalleryResult.launch("image/*")
+
+    private fun getTmpFileUri(): Uri {
+        val tmpFile = File.createTempFile("tmp_image_file", ".png").apply {
+            createNewFile()
+            deleteOnExit()
+        }
+
+        return FileProvider.getUriForFile(
+            requireContext(),
+            "${BuildConfig.APPLICATION_ID}.provider",
+            tmpFile
+        )
     }
 }

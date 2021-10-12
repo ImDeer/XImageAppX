@@ -2,6 +2,10 @@ package com.example.ximageappx
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.ximageappx.ui.MainNavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -12,19 +16,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.logInFragment,
+                R.id.galleryFragment
+            )
+        )
 
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as MainNavHostFragment
+        val navController = navHostFragment.findNavController()
 
-//        val navHostFragment =
-//            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
-//        navController = navHostFragment.findNavController()
-
-//        val appBarConfiguration = AppBarConfiguration(
-//            setOf(
-//                R.id.logInFragment,
-//                R.id.galleryFragment
-//            )
-//        )
-//        setupActionBarWithNavController(navController, appBarConfiguration)
+        setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
 //    override fun onSupportNavigateUp(): Boolean {

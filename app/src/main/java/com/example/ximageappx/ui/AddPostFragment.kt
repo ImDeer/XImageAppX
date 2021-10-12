@@ -30,13 +30,15 @@ class AddPostFragment @Inject constructor(
             ivNewImage.setImageURI(uri)
 
             btAddPost.setOnClickListener {
+                inputDescription.isFocusable = false
+                btAddPost.isClickable = false
                 progressBar.isVisible = true
                 val description = inputDescription.text.toString()
                 firebaseService.uploadImageToFirebaseStorage(uri) {
                     firebaseService.createPost(it, description)
-                    context?.showToast("postAdded")
+                    context?.showToast("Post added")
+//                    progressBar.isVisible = false
                     val action = AddPostFragmentDirections.actionAddPostFragmentToGalleryFragment()
-                    progressBar.isVisible = false
                     findNavController().navigate(action)
                 }
             }

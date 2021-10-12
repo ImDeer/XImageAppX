@@ -46,6 +46,7 @@
         android:fontFamily="sans-serif-light"
         android:hint="@string/enter_caption_here"
         android:inputType="text"
+        android:maxLength="55"
         android:minHeight="50dp"
         android:paddingStart="20dp"
         android:paddingTop="5dp"

@@ -78,7 +78,7 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.ximageappx.ui.RegisterFragment"
-        android:label="fragment_register"
+        android:label="@string/register"
         tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_registerFragment_to_logInFragment"
@@ -109,7 +109,7 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out"
-            app:popUpTo="@+id/nav_graph"
+            app:popUpTo="@+id/galleryFragment"
             app:popUpToInclusive="true" />
         <argument
             android:name="uri"

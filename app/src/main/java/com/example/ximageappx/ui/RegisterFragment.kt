@@ -9,9 +9,11 @@ import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentRegisterBinding
 import com.example.ximageappx.isEmailValid
 import com.example.ximageappx.isPassValid
+import com.example.ximageappx.services.EmailAlreadyExistsException
 import com.example.ximageappx.services.IFirebaseService
 import com.example.ximageappx.services.RegisterFailedException
 import com.example.ximageappx.showToast
+import java.lang.Exception
 import javax.inject.Inject
 
 class RegisterFragment @Inject constructor(
@@ -42,17 +44,19 @@ class RegisterFragment @Inject constructor(
                     context?.showToast("Please enter valid password. Password shout be at least 8 characters long and contain letters and numbers")
                 else if (login.isEmpty())
                     context?.showToast("Please enter Login")
-                else
+                else try {
+                    if (!firebaseService.checkEmailNew(email))
+                        throw EmailAlreadyExistsException("User with this email already exists!")
                     firebaseService.register(email, pass, login) {
-                        try {
-                            context?.showToast("SignUp successful")
-                            val action =
-                                RegisterFragmentDirections.actionRegisterFragmentToGalleryFragment()
-                            findNavController().navigate(action)
-                        } catch (e: RegisterFailedException) {
-                            context?.showToast(e.message.toString())
-                        }
+
+                        context?.showToast("SignUp successful")
+                        val action =
+                            RegisterFragmentDirections.actionRegisterFragmentToGalleryFragment()
+                        findNavController().navigate(action)
                     }
+                } catch (e: Exception) {
+                    context?.showToast(e.message.toString())
+                }
             }
         }
     }

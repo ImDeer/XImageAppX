@@ -43,43 +43,10 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-//        val binding = holder.binding
-//        binding.imageView = getItem(position) ?: return
-//        binding.executePendingBindings()
-
-
         val currentItem = getItem(position) ?: return
 
         holder.bind(currentItem)
     }
-
-
-//    private fun getPhotoCreator(photoCreator: String) {
-////            user.child(photoCreator).child("email").get().addOnSuccessListener
-////            val userListener =
-////        var tmpUser : User = User("","","")
-////        _user.
-//        FirebaseDatabase.getInstance().getReference("users/$photoCreator")
-//            .addValueEventListener(object : ValueEventListener {
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    if (snapshot.exists()) {
-//                        mUser = User(
-//                            email = snapshot.child("email").value.toString(),
-//                            login = snapshot.child("login").value.toString(),
-//                            profilePhotoUrl = snapshot.child("profilePhotoUrl").value.toString()
-//                        )
-//                    }
-//
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//                    Log.d("Adapter", "onCancelled")
-//                }
-//            })
-////            return tmpUser
-//
-////            user.child(photoCreator).addValueEventListener(userListener)
-//    }
 
     inner class PhotoViewHolder(
         private val binding: ItemUnsplashImageBinding
@@ -94,7 +61,6 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
                     val item = getItem(position)
                     if (item != null) {
                         listener.onItemClick(item)
-//                        getPhotoCreator(item.user)
                     }
                 }
             }
@@ -105,7 +71,7 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
                     val item = getItem(position)
                     if (item != null) {
                         if (!liked) {
-                            likedPosts.child(item.id).setValue(true)//.child("liked").setValue(true)
+                            likedPosts.child(item.id).setValue(true)
                         } else {
                             likedPosts.child(item.id).removeValue()
                         }
@@ -140,7 +106,7 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         // This method is called once with the initial value and again
                         // whenever data at this location is updated.
-                        if (dataSnapshot.exists())// && dataSnapshot.value == true
+                        if (dataSnapshot.exists())
                         {
                             mUser.login = dataSnapshot.child("login").value.toString()
                             mUser.profilePhotoUrl =
@@ -156,13 +122,11 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
                     }
 
                     override fun onCancelled(error: DatabaseError) {}
-
                 })
         }
 
 
         fun bind(photo: PhotoPost) {
-//            getPhotoCreator(photo.user)
             binding.apply {
                 Glide.with(itemView)
                     .load(photo.url)
@@ -172,12 +136,6 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
                     .into(imageView)
                 getLikedState(photo)
                 getPhotoCreator(photo)
-
-//                textViewUserName.text = mUser.login //photo.user.login
-//                if (mUser.profilePhotoUrl != "")
-//                    ivItemProfImage.setImageURI(mUser.profilePhotoUrl.toUri())
-//                else
-//                    ivItemProfImage.setImageResource(R.drawable.default_profile_image)
             }
         }
     }

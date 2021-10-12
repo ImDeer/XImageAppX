@@ -69,7 +69,7 @@ class DetailsFragment constructor(
                         textViewDescription.isVisible = photo.description != ""
                         likeButton.isVisible = true
                         wallpaperButton.isVisible = true
-                        gradient.isVisible = true
+//                        gradient.isVisible = true
                         shareButton.isVisible = true
 
                         imageViewBg.setImageDrawable(resource)

@@ -4,10 +4,12 @@ import android.net.Uri
 import android.util.Log
 import com.example.ximageappx.data.PhotoPost
 import com.example.ximageappx.data.User
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.SignInMethodQueryResult
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -17,8 +19,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.scopes.ServiceScoped
 import java.sql.Timestamp
-import java.time.Instant
 import java.util.*
+
 
 @ServiceScoped
 class FirebaseService : IFirebaseService {
@@ -48,12 +50,7 @@ class FirebaseService : IFirebaseService {
                     callback(user)
                 }
 
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.e(
-                        "FirebaseService",
-                        "onCancelled: Something went wrong! Error:" + databaseError.message
-                    )
-                }
+                override fun onCancelled(databaseError: DatabaseError) { }
             })
     }
 
@@ -148,6 +145,15 @@ class FirebaseService : IFirebaseService {
 
     override fun resetPass() {
         mAuth.sendPasswordResetEmail(getCurrentUser()!!.email!!)
+    }
+
+    override fun checkEmailNew(email: String): Boolean {
+        var emailIsNew = false
+        mAuth.fetchSignInMethodsForEmail(email)
+            .addOnCompleteListener(OnCompleteListener<SignInMethodQueryResult> { task ->
+                emailIsNew = task.isSuccessful
+            })
+        return emailIsNew
     }
 
     override fun register(

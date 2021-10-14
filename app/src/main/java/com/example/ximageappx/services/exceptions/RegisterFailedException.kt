@@ -1,4 +1,4 @@
-package com.example.ximageappx.services
+package com.example.ximageappx.services.exceptions
 
 import java.lang.Exception
 

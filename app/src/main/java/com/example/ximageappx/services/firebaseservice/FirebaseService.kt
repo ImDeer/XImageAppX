@@ -1,15 +1,13 @@
-package com.example.ximageappx.services
+package com.example.ximageappx.services.firebaseservice
 
 import android.net.Uri
-import android.util.Log
 import com.example.ximageappx.data.PhotoPost
 import com.example.ximageappx.data.User
-import com.google.android.gms.tasks.OnCompleteListener
+import com.example.ximageappx.services.exceptions.RegisterFailedException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.SignInMethodQueryResult
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -24,12 +22,6 @@ import java.util.*
 
 @ServiceScoped
 class FirebaseService : IFirebaseService {
-//@Inject constructor(
-//    private val authService: IAuthService
-//) : IFirebaseService {
-
-//    @Inject
-//    lateinit var authService: IAuthService
 
     private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
@@ -50,7 +42,7 @@ class FirebaseService : IFirebaseService {
                     callback(user)
                 }
 
-                override fun onCancelled(databaseError: DatabaseError) { }
+                override fun onCancelled(databaseError: DatabaseError) {}
             })
     }
 
@@ -101,6 +93,7 @@ class FirebaseService : IFirebaseService {
             mDB.child("likes").child(getCurrentUser()!!.uid).child(photoId).setValue(true)
         else
             mDB.child("likes").child(getCurrentUser()!!.uid).child(photoId).removeValue()
+
     }
 
     override fun getLikedState(
@@ -141,6 +134,8 @@ class FirebaseService : IFirebaseService {
     // region authServicePart
     override fun getCurrentUser(): FirebaseUser? = mAuth.currentUser
 
+    override fun isAuthenticated(): Boolean = getCurrentUser() != null
+
     override fun signOut() = mAuth.signOut()
 
     override fun resetPass() {
@@ -150,9 +145,9 @@ class FirebaseService : IFirebaseService {
     override fun checkEmailNew(email: String): Boolean {
         var emailIsNew = false
         mAuth.fetchSignInMethodsForEmail(email)
-            .addOnCompleteListener(OnCompleteListener<SignInMethodQueryResult> { task ->
+            .addOnCompleteListener { task ->
                 emailIsNew = task.isSuccessful
-            })
+            }
         return emailIsNew
     }
 

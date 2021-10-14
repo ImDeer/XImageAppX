@@ -28,4 +28,9 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="register">Register</string>
+    <string name="enter_valid_email">Please enter valid Email</string>
+    <string name="enter_valid_pass">Password shout be at least 8 characters long</string>
+    <string name="enter_login">Please enter Login</string>
+    <string name="email_user_exists">User with this email already exists!</string>
+    <string name="signup_sucsess">SignUp successful</string>
 </resources>

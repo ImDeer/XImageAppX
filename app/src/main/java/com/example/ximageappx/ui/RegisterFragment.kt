@@ -2,18 +2,15 @@ package com.example.ximageappx.ui
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentRegisterBinding
 import com.example.ximageappx.isEmailValid
 import com.example.ximageappx.isPassValid
-import com.example.ximageappx.services.EmailAlreadyExistsException
-import com.example.ximageappx.services.IFirebaseService
-import com.example.ximageappx.services.RegisterFailedException
+import com.example.ximageappx.services.exceptions.EmailAlreadyExistsException
+import com.example.ximageappx.services.firebaseservice.IFirebaseService
 import com.example.ximageappx.showToast
-import java.lang.Exception
 import javax.inject.Inject
 
 class RegisterFragment @Inject constructor(
@@ -39,17 +36,17 @@ class RegisterFragment @Inject constructor(
                 val pass = inputRegPass.text.toString().trim { it <= ' ' }
 
                 if (!email.isEmailValid())
-                    context?.showToast("Please enter valid Email")
+                    context?.showToast(getString(R.string.enter_valid_email))
                 else if (!pass.isPassValid())
-                    context?.showToast("Please enter valid password. Password shout be at least 8 characters long and contain letters and numbers")
+                    context?.showToast(getString(R.string.enter_valid_pass))
                 else if (login.isEmpty())
-                    context?.showToast("Please enter Login")
+                    context?.showToast(getString(R.string.enter_login))
                 else try {
                     if (!firebaseService.checkEmailNew(email))
-                        throw EmailAlreadyExistsException("User with this email already exists!")
+                        throw EmailAlreadyExistsException(getString(R.string.email_user_exists))
                     firebaseService.register(email, pass, login) {
 
-                        context?.showToast("SignUp successful")
+                        context?.showToast(getString(R.string.signup_sucsess))
                         val action =
                             RegisterFragmentDirections.actionRegisterFragmentToGalleryFragment()
                         findNavController().navigate(action)

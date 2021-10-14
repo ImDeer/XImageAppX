@@ -15,10 +15,9 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.example.ximageappx.MainActivity
 import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentDetailsBinding
-import com.example.ximageappx.services.IFirebaseService
+import com.example.ximageappx.services.firebaseservice.IFirebaseService
 import com.example.ximageappx.showToast
 import java.io.IOException
 
@@ -33,7 +32,7 @@ class DetailsFragment constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var _liked = false
+        var tmpLiked = false
 
         val binding = FragmentDetailsBinding.bind(view)
 
@@ -69,7 +68,6 @@ class DetailsFragment constructor(
                         textViewDescription.isVisible = photo.description != ""
                         likeButton.isVisible = true
                         wallpaperButton.isVisible = true
-//                        gradient.isVisible = true
                         shareButton.isVisible = true
 
                         imageViewBg.setImageDrawable(resource)
@@ -99,7 +97,6 @@ class DetailsFragment constructor(
                 val login = user.login
                 val profilePhotoUrl = user.profilePhotoUrl
                 textViewCreator.text = "Photo by $login"
-//                (activity as MainActivity).supportActionBar?.title = login
                 if (profilePhotoUrl != "null")
                     Glide.with(ivItemProfImage).load(profilePhotoUrl)
                         .error(R.drawable.default_profile_image).circleCrop()
@@ -109,10 +106,7 @@ class DetailsFragment constructor(
             }
 
             firebaseService.getLikedState(photoId = photo.id, callback = { liked ->
-                if (liked)
-                    likeButton.setImageResource(R.drawable.ic_like_liked)
-                else
-                    likeButton.setImageResource(R.drawable.ic_like)
+                likeButton.setImageResource(if (liked) R.drawable.ic_like_liked else R.drawable.ic_like)
             }, callback2 = {
                 context?.showToast("Oops")
             })
@@ -129,12 +123,11 @@ class DetailsFragment constructor(
 
             // change liked state
             likeButton.setOnClickListener {
-                firebaseService.setLikedValue(photo.id, _liked)
-                _liked = !_liked
-                if (_liked)
-                    likeButton.setImageResource(R.drawable.ic_like_liked)
-                else
-                    likeButton.setImageResource(R.drawable.ic_like)
+                firebaseService.setLikedValue(photo.id, tmpLiked)
+                firebaseService.getLikedState(photo.id, { liked ->
+                    likeButton.setImageResource(if (liked) R.drawable.ic_like_liked else R.drawable.ic_like)
+                    tmpLiked = liked
+                })
             }
 
             // set image as a wallpaper

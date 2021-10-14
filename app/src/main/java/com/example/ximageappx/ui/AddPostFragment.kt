@@ -8,7 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentAddPostBinding
-import com.example.ximageappx.services.IFirebaseService
+import com.example.ximageappx.services.firebaseservice.IFirebaseService
 import com.example.ximageappx.showToast
 import javax.inject.Inject
 
@@ -37,7 +37,6 @@ class AddPostFragment @Inject constructor(
                 firebaseService.uploadImageToFirebaseStorage(uri) {
                     firebaseService.createPost(it, description)
                     context?.showToast("Post added")
-//                    progressBar.isVisible = false
                     val action = AddPostFragmentDirections.actionAddPostFragmentToGalleryFragment()
                     findNavController().navigate(action)
                 }

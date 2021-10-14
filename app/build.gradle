@@ -52,9 +52,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
 
-//    implementation 'com.google.firebase:firebase-database:20.0.2'
-//    implementation 'com.google.firebase:firebase-auth:21.0.1'
-//    implementation 'com.google.firebase:firebase-firestore-ktx:23.0.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -77,14 +74,8 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
     // Dagger Hilt to make dependency injection easier (Hilt is a library to work with Dagger easier)
-    implementation 'com.google.dagger:hilt-android:2.39.1'//"com.google.dagger:hilt-android:2.31-alpha"//$hiltVersion"
-    kapt 'com.google.dagger:hilt-compiler:2.39.1'//"com.google.dagger:hilt-android-compiler:2.31-alpha"//$hiltVersion"
-//    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
-//    kapt "androidx.hilt:hilt-compiler:1.0.0"
-
-    // Retrofit + GSON to communicate with the REST API (knows how to convert json strings into Kotlin representation)
-//    implementation "com.squareup.retrofit2:retrofit:2.9.0"
-//    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation 'com.google.dagger:hilt-android:2.39.1'
+    kapt 'com.google.dagger:hilt-compiler:2.39.1'
 
     // Glide (async image loading)
     implementation "com.github.bumptech.glide:glide:4.11.0"
@@ -108,6 +99,7 @@ dependencies {
 
     implementation 'androidx.fragment:fragment-ktx:1.3.6'
 
+    implementation 'com.github.CanHub:Android-Image-Cropper:3.2.2'
 
 }
 kapt {

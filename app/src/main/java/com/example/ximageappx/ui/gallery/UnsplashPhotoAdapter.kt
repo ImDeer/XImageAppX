@@ -9,27 +9,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.ximageappx.R
 import com.example.ximageappx.data.PhotoPost
-import com.example.ximageappx.data.User
 import com.example.ximageappx.databinding.ItemUnsplashImageBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.example.ximageappx.services.firebaseservice.IFirebaseService
 
 
-class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
+class UnsplashPhotoAdapter(
+    private val listener: OnItemClickListener,
+    val firebaseService: IFirebaseService
+) :
     PagingDataAdapter<PhotoPost, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
-
-    private val uid = FirebaseAuth.getInstance().currentUser!!.uid
-    val ref = FirebaseDatabase.getInstance().getReference("users")
-    val likedPosts =
-        FirebaseDatabase.getInstance().getReference("likes/$uid")//.child("$uid/likedPosts")
-
-//    private val _user = FirebaseDatabase.getInstance().getReference("users")
-
-    //    private lateinit var _user: DatabaseReference
-    private var mUser: User = User()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val binding =
@@ -39,7 +27,7 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
                 false
             )
 
-        return PhotoViewHolder(binding)
+        return PhotoViewHolder(binding, firebaseService)
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
@@ -49,10 +37,11 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
     }
 
     inner class PhotoViewHolder(
-        private val binding: ItemUnsplashImageBinding
+        private val binding: ItemUnsplashImageBinding,
+        val firebaseService: IFirebaseService
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        var liked = false
+        private var tmpLiked = false
 
         init {
             binding.root.setOnClickListener {
@@ -70,59 +59,31 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
                 if (position != RecyclerView.NO_POSITION) {
                     val item = getItem(position)
                     if (item != null) {
-                        if (!liked) {
-                            likedPosts.child(item.id).setValue(true)
-                        } else {
-                            likedPosts.child(item.id).removeValue()
-                        }
+                        firebaseService.setLikedValue(item.id, tmpLiked)
                     }
                 }
             }
         }
 
         private fun getLikedState(photo: PhotoPost) {
-            likedPosts.child(photo.id)
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        // This method is called once with the initial value and again
-                        // whenever data at this location is updated.
-                        liked = dataSnapshot.exists() && dataSnapshot.value == true
-                        if (liked) {
-                            binding.likeButton.setImageResource(R.drawable.ic_like_liked)
-                        } else {
-                            binding.likeButton.setImageResource(R.drawable.ic_like)
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {}
-
-                })
+            firebaseService.getLikedState(photoId = photo.id, callback = { liked ->
+                binding.likeButton.setImageResource(if (liked) R.drawable.ic_like_liked else R.drawable.ic_like)
+                tmpLiked = liked
+            })
         }
 
         private fun getPhotoCreator(photo: PhotoPost) {
-            ref.child(photo.user)
-                .addValueEventListener(object : ValueEventListener {
 
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        // This method is called once with the initial value and again
-                        // whenever data at this location is updated.
-                        if (dataSnapshot.exists())
-                        {
-                            mUser.login = dataSnapshot.child("login").value.toString()
-                            mUser.profilePhotoUrl =
-                                dataSnapshot.child("profilePhotoUrl").value.toString()
-                            binding.textViewUserName.text = mUser.login
-                            if (mUser.profilePhotoUrl != "null")
-                                Glide.with(binding.ivItemProfImage).load(mUser.profilePhotoUrl)
-                                    .error(R.drawable.default_profile_image).circleCrop()
-                                    .into(binding.ivItemProfImage)
-                            else
-                                binding.ivItemProfImage.setImageResource(R.drawable.default_profile_image)
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {}
-                })
+            firebaseService.listenToPhotoCreator(photo.user) { user ->
+                val profilePhotoUrl = user.profilePhotoUrl
+                binding.textViewUserName.text = user.login
+                if (profilePhotoUrl != "null")
+                    Glide.with(binding.ivItemProfImage).load(profilePhotoUrl)
+                        .error(R.drawable.default_profile_image).circleCrop()
+                        .into(binding.ivItemProfImage)
+                else
+                    binding.ivItemProfImage.setImageResource(R.drawable.default_profile_image)
+            }
         }
 
 

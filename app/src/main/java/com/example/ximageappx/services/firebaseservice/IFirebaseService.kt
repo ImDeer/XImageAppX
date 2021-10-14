@@ -1,11 +1,10 @@
-package com.example.ximageappx.services
+package com.example.ximageappx.services.firebaseservice
 
 import android.net.Uri
 import com.example.ximageappx.data.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
-import dagger.hilt.android.AndroidEntryPoint
 
 interface IFirebaseService {
     // region firebaseDB
@@ -18,8 +17,8 @@ interface IFirebaseService {
     fun setLikedValue(photoId: String, liked: Boolean)
     fun getLikedState(
         photoId: String,
-        callback: (liked: Boolean) -> Unit,
-        callback2: () -> Unit
+        callback: (liked: Boolean) -> Unit = {},
+        callback2: () -> Unit = {}
     )
     // endregion
 
@@ -28,6 +27,7 @@ interface IFirebaseService {
 
     // region firebaseAuth
     fun getCurrentUser(): FirebaseUser?
+    fun isAuthenticated(): Boolean
     fun signOut()
     fun resetPass()
     fun checkEmailNew(email: String): Boolean

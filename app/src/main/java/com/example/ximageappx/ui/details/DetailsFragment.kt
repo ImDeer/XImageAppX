@@ -46,7 +46,7 @@ class DetailsFragment constructor(
 
 
             Glide.with(this@DetailsFragment)
-                .load(photo.url)//s.full)
+                .load(photo.url)
                 .error(R.drawable.ic_no_image)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed( // error

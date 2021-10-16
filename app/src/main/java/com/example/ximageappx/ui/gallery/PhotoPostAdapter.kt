@@ -16,8 +16,7 @@ import com.example.ximageappx.services.firebaseservice.IFirebaseService
 class PhotoPostAdapter(
     private val listener: OnItemClickListener,
     val firebaseService: IFirebaseService
-) :
-    PagingDataAdapter<PhotoPost, PhotoPostAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
+) : PagingDataAdapter<PhotoPost, PhotoPostAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val binding =

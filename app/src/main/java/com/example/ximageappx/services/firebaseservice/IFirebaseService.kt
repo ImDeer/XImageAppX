@@ -30,7 +30,6 @@ interface IFirebaseService {
     fun isAuthenticated(): Boolean
     fun signOut()
     fun resetPass()
-    fun checkEmailNew(email: String): Boolean
     fun register(
         email: String,
         password: String,

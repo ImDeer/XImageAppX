@@ -26,24 +26,15 @@
         tools:scaleType="fitCenter"
         tools:src="@mipmap/ic_launcher" />
 
-<!--    <View-->
-<!--        android:id="@+id/gradient"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="60dp"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        android:background="@drawable/gradient"-->
-<!--        android:visibility="gone"-->
-<!--        tools:visibility="visible" />-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:paddingBottom="5dp"
         android:background="@drawable/gradient"
         android:gravity="bottom"
         android:minHeight="50dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="5dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_item_prof_image"
@@ -95,8 +86,8 @@
             android:padding="8dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_share"
-            android:tint="@color/white"
             android:visibility="gone"
+            app:tint="@color/white"
             tools:visibility="visible" />
 
         <ImageButton
@@ -122,8 +113,8 @@
             android:padding="8dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_wallpaper"
-            android:tint="@color/white"
             android:visibility="gone"
+            app:tint="@color/white"
             tools:visibility="visible" />
 
     </LinearLayout>
@@ -140,5 +131,6 @@
         app:minLineLength="0.3"
         app:sizeMultiplier="1"
         app:strokeWidth="3dp" />
+
 
 </FrameLayout>

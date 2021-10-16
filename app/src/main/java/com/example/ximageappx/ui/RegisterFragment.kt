@@ -8,7 +8,6 @@ import com.example.ximageappx.R
 import com.example.ximageappx.databinding.FragmentRegisterBinding
 import com.example.ximageappx.isEmailValid
 import com.example.ximageappx.isPassValid
-import com.example.ximageappx.services.exceptions.EmailAlreadyExistsException
 import com.example.ximageappx.services.firebaseservice.IFirebaseService
 import com.example.ximageappx.showToast
 import javax.inject.Inject
@@ -42,10 +41,7 @@ class RegisterFragment @Inject constructor(
                 else if (login.isEmpty())
                     context?.showToast(getString(R.string.enter_login))
                 else try {
-                    if (!firebaseService.checkEmailNew(email))
-                        throw EmailAlreadyExistsException(getString(R.string.email_user_exists))
                     firebaseService.register(email, pass, login) {
-
                         context?.showToast(getString(R.string.signup_sucsess))
                         val action =
                             RegisterFragmentDirections.actionRegisterFragmentToGalleryFragment()

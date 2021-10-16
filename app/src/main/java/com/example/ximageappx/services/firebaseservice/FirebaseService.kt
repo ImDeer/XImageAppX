@@ -3,10 +3,12 @@ package com.example.ximageappx.services.firebaseservice
 import android.net.Uri
 import com.example.ximageappx.data.PhotoPost
 import com.example.ximageappx.data.User
+import com.example.ximageappx.services.exceptions.EmailAlreadyExistsException
 import com.example.ximageappx.services.exceptions.RegisterFailedException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -142,15 +144,6 @@ class FirebaseService : IFirebaseService {
         mAuth.sendPasswordResetEmail(getCurrentUser()!!.email!!)
     }
 
-    override fun checkEmailNew(email: String): Boolean {
-        var emailIsNew = false
-        mAuth.fetchSignInMethodsForEmail(email)
-            .addOnCompleteListener { task ->
-                emailIsNew = task.isSuccessful
-            }
-        return emailIsNew
-    }
-
     override fun register(
         email: String,
         password: String,
@@ -162,7 +155,11 @@ class FirebaseService : IFirebaseService {
                 createUserWithEmailAndLogin(email, login)
                 callback()
             } else {
-                throw RegisterFailedException("Register failed!")
+                if (it.exception is FirebaseAuthUserCollisionException) {
+                    throw EmailAlreadyExistsException("User with this email already exists!")
+                } else {
+                    throw RegisterFailedException("Register failed!")
+                }
             }
         }
     }

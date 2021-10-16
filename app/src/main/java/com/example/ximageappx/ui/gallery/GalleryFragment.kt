@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 class GalleryFragment constructor(
     private val firebaseService: IFirebaseService
 ) : Fragment(R.layout.fragment_gallery),
-    UnsplashPhotoAdapter.OnItemClickListener {
+    PhotoPostAdapter.OnItemClickListener {
 
     private val viewModel by viewModels<GalleryViewModel>()
 
@@ -44,14 +44,14 @@ class GalleryFragment constructor(
         } else {
             _binding = FragmentGalleryBinding.bind(view)
 
-            val adapter = UnsplashPhotoAdapter(this, firebaseService)
+            val adapter = PhotoPostAdapter(this, firebaseService)
 
             binding.apply {
                 recyclerView.setHasFixedSize(true)
                 recyclerView.itemAnimator = null
                 recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
-                    header = UnsplashPhotoLoadStateAdapter { adapter.retry() },
-                    footer = UnsplashPhotoLoadStateAdapter { adapter.retry() }
+                    header = PhotoPostLoadStateAdapter { adapter.retry() },
+                    footer = PhotoPostLoadStateAdapter { adapter.retry() }
                 )
                 buttonRetry.setOnClickListener {
                     adapter.retry()

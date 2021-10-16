@@ -1,5 +1,6 @@
 package com.example.ximageappx.ui.details
 
+import android.annotation.SuppressLint
 import android.app.WallpaperManager
 import android.content.Intent
 import android.graphics.drawable.Drawable
@@ -16,10 +17,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.ximageappx.R
+import com.example.ximageappx.bitmapToUri
 import com.example.ximageappx.databinding.FragmentDetailsBinding
 import com.example.ximageappx.services.firebaseservice.IFirebaseService
 import com.example.ximageappx.showToast
-import java.io.IOException
+import java.io.*
+import java.util.*
 
 
 class DetailsFragment constructor(
@@ -29,6 +32,7 @@ class DetailsFragment constructor(
     private val args by navArgs<DetailsFragmentArgs>()
 
     // loads details fragment
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -113,12 +117,20 @@ class DetailsFragment constructor(
 
             // share photo (link)
             shareButton.setOnClickListener {
-                val shareIntent = Intent()
-                shareIntent.action = Intent.ACTION_SEND
-                shareIntent.putExtra(Intent.EXTRA_TEXT, photo.url)//s.full)
-                shareIntent.type = "text/plain"
+                val bmap = imageView.drawable.toBitmap()
+                val tmpUri = bitmapToUri(bmap, requireContext())
 
-                startActivity(Intent.createChooser(shareIntent, "Share To:"))
+                try {
+                    val shareIntent = Intent()
+                    shareIntent.action = Intent.ACTION_SEND
+                    shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, tmpUri)
+                    shareIntent.type = "image/*"
+                    startActivity(Intent.createChooser(shareIntent, "Share image via"))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    context?.showToast("Oops! Something went wrong")
+                }
             }
 
             // change liked state

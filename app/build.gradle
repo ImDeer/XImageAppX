@@ -18,7 +18,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "UNSPLASH_ACCESS_KEY", unsplash_access_key)
+//        buildConfigField("String", "UNSPLASH_ACCESS_KEY", unsplash_access_key)
 
         multiDexEnabled true
 
@@ -26,8 +26,10 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            isMinifyEnabled = true
+            shrinkResources = true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'//-optimize
         }
     }
 

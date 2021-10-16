@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_unsplash_image" />
+        tools:listitem="@layout/item_photopost_image" />
 
     <com.vlad1m1r.lemniscate.funny.HeartProgressView
         android:id="@+id/progress_bar"

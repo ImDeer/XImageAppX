@@ -38,9 +38,9 @@ class PhotoPostLoadStateAdapter(private val retry: () -> Unit) :
             binding.apply {
                 progressBar.isVisible = loadState is LoadState.Loading
                 buttonRetry.isVisible =
-                    loadState is LoadState.NotLoading //&& !loadState.endOfPaginationReached
+                    loadState is LoadState.NotLoading
                 textViewError.isVisible =
-                    loadState is LoadState.NotLoading //&& !loadState.endOfPaginationReached
+                    loadState is LoadState.NotLoading
             }
         }
     }

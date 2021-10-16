@@ -34,7 +34,8 @@ interface IFirebaseService {
         email: String,
         password: String,
         login: String,
-        callback: () -> Unit
+        callback: () -> Unit,
+        callback2: (errorMessage: String) -> Unit
     )
 
     fun authenticate(email: String, password: String, callback: (Task<AuthResult>) -> Unit)

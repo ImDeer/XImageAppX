@@ -2,6 +2,7 @@ package com.example.ximageappx.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.ximageappx.R
@@ -30,6 +31,7 @@ class RegisterFragment @Inject constructor(
             }
 
             btRegister.setOnClickListener {
+                progressBar.isVisible = true
                 val email = inputRegEmail.text.toString().trim { it <= ' ' }
                 val login = inputRegLogin.text.toString().trim { it <= ' ' }
                 val pass = inputRegPass.text.toString().trim { it <= ' ' }
@@ -40,16 +42,17 @@ class RegisterFragment @Inject constructor(
                     context?.showToast(getString(R.string.enter_valid_pass))
                 else if (login.isEmpty())
                     context?.showToast(getString(R.string.enter_login))
-                else try {
-                    firebaseService.register(email, pass, login) {
+                else
+                    firebaseService.register(email, pass, login, {
                         context?.showToast(getString(R.string.signup_sucsess))
                         val action =
                             RegisterFragmentDirections.actionRegisterFragmentToGalleryFragment()
+                        progressBar.isVisible = false
                         findNavController().navigate(action)
-                    }
-                } catch (e: Exception) {
-                    context?.showToast(e.message.toString())
-                }
+                    }, { errorMessage ->
+                        progressBar.isVisible = false
+                        context?.showToast(errorMessage)
+                    })
             }
         }
     }

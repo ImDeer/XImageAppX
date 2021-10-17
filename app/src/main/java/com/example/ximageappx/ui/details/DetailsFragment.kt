@@ -83,19 +83,7 @@ class DetailsFragment constructor(
                 })
                 .into(imageView)
 
-            // clickable username
-//            textViewDescription.text = photo.description
-
-//            val uri = Uri.parse(photo.url)//.links.html)
-//            val intent = Intent(Intent.ACTION_VIEW, uri)
-//
-//            textViewCreator.apply {
-//                setOnClickListener {
-//                    context.startActivity(intent)
-//                }
-//                paint.isUnderlineText = true
-//
-//            }
+            textViewDescription.text = photo.description
 
             firebaseService.listenToPhotoCreator(photo.user) { user ->
                 val login = user.login

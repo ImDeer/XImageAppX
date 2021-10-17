@@ -1,13 +1,11 @@
 package com.example.ximageappx
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.widget.Toast
-import java.io.*
-import java.util.*
+import java.io.ByteArrayOutputStream
 
 fun String.isEmailValid(): Boolean {
     return this.isNotEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()

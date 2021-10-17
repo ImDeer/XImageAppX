@@ -34,7 +34,7 @@
             <TextView
                 android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-thin"
@@ -62,7 +62,7 @@
             <TextView
                 android:id="@+id/tv_pass"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-thin"

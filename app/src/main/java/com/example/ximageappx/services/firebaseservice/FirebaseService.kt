@@ -128,9 +128,10 @@ class FirebaseService : IFirebaseService {
                 description,
                 Timestamp(System.currentTimeMillis()).toString(),
                 getCurrentUser()!!.uid,
-                uri.toString()
+                it.toString()
             )
             newPostRef.set(newPost)
+            callback()
         }
     }
 

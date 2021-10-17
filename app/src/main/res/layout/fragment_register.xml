@@ -30,7 +30,7 @@
             <TextView
                 android:id="@+id/tv_reg_email"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-thin"
@@ -58,11 +58,11 @@
             <TextView
                 android:id="@+id/tv_reg_login"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-thin"
-                android:text="@string/login"
+                android:text="@string/name"
                 android:textAllCaps="false"
                 android:textColor="#67BBE8"
                 android:textSize="30sp" />
@@ -86,7 +86,7 @@
             <TextView
                 android:id="@+id/tv_reg_pass"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="sans-serif-thin"

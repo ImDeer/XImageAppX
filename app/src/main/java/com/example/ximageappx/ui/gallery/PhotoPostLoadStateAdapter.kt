@@ -6,13 +6,13 @@ import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ximageappx.databinding.UnsplashPhotoLoadStateFooterBinding
+import com.example.ximageappx.databinding.PhotopostPhotoLoadStateFooterBinding
 
 class PhotoPostLoadStateAdapter(private val retry: () -> Unit) :
     LoadStateAdapter<PhotoPostLoadStateAdapter.LoadStateViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): LoadStateViewHolder {
-        val binding = UnsplashPhotoLoadStateFooterBinding.inflate(
+        val binding = PhotopostPhotoLoadStateFooterBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -25,7 +25,7 @@ class PhotoPostLoadStateAdapter(private val retry: () -> Unit) :
         holder.bind(loadState)
     }
 
-    inner class LoadStateViewHolder(private val binding: UnsplashPhotoLoadStateFooterBinding) :
+    inner class LoadStateViewHolder(private val binding: PhotopostPhotoLoadStateFooterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {

@@ -50,7 +50,7 @@
     </fragment>
     <fragment
         android:id="@+id/logInFragment"
-        android:name="com.example.ximageappx.ui.LogInFragment"
+        android:name="com.example.ximageappx.ui.login.LogInFragment"
         android:label="@string/log_in"
         tools:layout="@layout/fragment_login">
         <action
@@ -77,7 +77,7 @@
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.ximageappx.ui.RegisterFragment"
+        android:name="com.example.ximageappx.ui.registration.RegisterFragment"
         android:label="@string/register"
         tools:layout="@layout/fragment_register">
         <action
@@ -99,8 +99,8 @@
     </fragment>
     <fragment
         android:id="@+id/addPostFragment"
-        android:name="com.example.ximageappx.ui.AddPostFragment"
-        android:label="fragment_add_post"
+        android:name="com.example.ximageappx.ui.addpost.AddPostFragment"
+        android:label="Add Post"
         tools:layout="@layout/fragment_add_post">
         <action
             android:id="@+id/action_addPostFragment_to_galleryFragment"

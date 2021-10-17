@@ -3,7 +3,6 @@ package com.example.ximageappx.services.firebaseservice
 import android.net.Uri
 import com.example.ximageappx.data.PhotoPost
 import com.example.ximageappx.data.User
-import com.example.ximageappx.services.exceptions.RegisterFailedException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -47,8 +46,10 @@ class FirebaseService : IFirebaseService {
     }
 
     override fun setProfilePhoto(uri: Uri?) {
-        mDB.child("users").child(getCurrentUser()!!.uid).child("profilePhotoUrl")
-            .setValue(uri.toString())
+        uploadImageToFirebaseStorage(uri) {
+            mDB.child("users").child(getCurrentUser()!!.uid).child("profilePhotoUrl")
+                .setValue(it.toString())
+        }
     }
 
     override fun uploadImageToFirebaseStorage(uri: Uri?, callback: (uri: Uri) -> Unit) {
@@ -119,16 +120,18 @@ class FirebaseService : IFirebaseService {
 
     // endregion
 
-    override fun createPost(uri: Uri, description: String) {
-        val newPostRef = mFirestore.document()
-        val newPost = PhotoPost(
-            newPostRef.id,
-            description,
-            Timestamp(System.currentTimeMillis()).toString(),
-            getCurrentUser()!!.uid,
-            uri.toString()
-        )
-        newPostRef.set(newPost)
+    override fun createPost(uri: Uri, description: String, callback: () -> Unit) {
+        uploadImageToFirebaseStorage(uri) {
+            val newPostRef = mFirestore.document()
+            val newPost = PhotoPost(
+                newPostRef.id,
+                description,
+                Timestamp(System.currentTimeMillis()).toString(),
+                getCurrentUser()!!.uid,
+                uri.toString()
+            )
+            newPostRef.set(newPost)
+        }
     }
 
     // region authServicePart
@@ -147,14 +150,14 @@ class FirebaseService : IFirebaseService {
         password: String,
         login: String,
         callback: () -> Unit,
-        callback2: (errorMessage:String) -> Unit
+        callback2: (errorMessage: String) -> Unit
     ) {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 createUserWithEmailAndLogin(email, login)
                 callback()
             } else {
-                callback2(it.exception?.message?:"")
+                callback2(it.exception?.message ?: "")
             }
         }
     }

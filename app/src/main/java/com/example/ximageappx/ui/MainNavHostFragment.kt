@@ -2,6 +2,7 @@ package com.example.ximageappx.ui
 
 import android.content.Context
 import androidx.navigation.fragment.NavHostFragment
+import com.example.ximageappx.ui.AppFragmentFactory
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.example.ximageappx.ui
+package com.example.ximageappx.ui.login
 
 import android.os.Bundle
 import android.view.View

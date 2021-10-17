@@ -3,9 +3,12 @@ package com.example.ximageappx.ui
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.example.ximageappx.services.firebaseservice.IFirebaseService
+import com.example.ximageappx.ui.addpost.AddPostFragment
 import com.example.ximageappx.ui.details.DetailsFragment
 import com.example.ximageappx.ui.gallery.GalleryFragment
+import com.example.ximageappx.ui.login.LogInFragment
 import com.example.ximageappx.ui.profile.ProfileFragment
+import com.example.ximageappx.ui.registration.RegisterFragment
 import javax.inject.Inject
 
 class AppFragmentFactory @Inject constructor(

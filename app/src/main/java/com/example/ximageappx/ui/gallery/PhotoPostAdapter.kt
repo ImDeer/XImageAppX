@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.ximageappx.R
 import com.example.ximageappx.data.PhotoPost
-import com.example.ximageappx.databinding.ItemUnsplashImageBinding
+import com.example.ximageappx.databinding.ItemPhotopostImageBinding
 import com.example.ximageappx.services.firebaseservice.IFirebaseService
 
 
@@ -20,7 +20,7 @@ class PhotoPostAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         val binding =
-            ItemUnsplashImageBinding.inflate(
+            ItemPhotopostImageBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -36,7 +36,7 @@ class PhotoPostAdapter(
     }
 
     inner class PhotoViewHolder(
-        private val binding: ItemUnsplashImageBinding,
+        private val binding: ItemPhotopostImageBinding,
         val firebaseService: IFirebaseService
     ) : RecyclerView.ViewHolder(binding.root) {
 

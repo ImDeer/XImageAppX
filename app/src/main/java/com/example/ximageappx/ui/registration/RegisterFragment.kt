@@ -1,4 +1,4 @@
-package com.example.ximageappx.ui
+package com.example.ximageappx.ui.registration
 
 import android.os.Bundle
 import android.view.View
@@ -31,7 +31,6 @@ class RegisterFragment @Inject constructor(
             }
 
             btRegister.setOnClickListener {
-                progressBar.isVisible = true
                 val email = inputRegEmail.text.toString().trim { it <= ' ' }
                 val login = inputRegLogin.text.toString().trim { it <= ' ' }
                 val pass = inputRegPass.text.toString().trim { it <= ' ' }
@@ -42,7 +41,8 @@ class RegisterFragment @Inject constructor(
                     context?.showToast(getString(R.string.enter_valid_pass))
                 else if (login.isEmpty())
                     context?.showToast(getString(R.string.enter_login))
-                else
+                else {
+                    progressBar.isVisible = true
                     firebaseService.register(email, pass, login, {
                         context?.showToast(getString(R.string.signup_sucsess))
                         val action =
@@ -53,6 +53,7 @@ class RegisterFragment @Inject constructor(
                         progressBar.isVisible = false
                         context?.showToast(errorMessage)
                     })
+                }
             }
         }
     }

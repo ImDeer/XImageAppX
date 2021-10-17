@@ -23,7 +23,7 @@ interface IFirebaseService {
     // endregion
 
     // region fi
-    fun createPost(uri: Uri, description: String)
+    fun createPost(uri: Uri, description: String, callback: () -> Unit)
 
     // region firebaseAuth
     fun getCurrentUser(): FirebaseUser?

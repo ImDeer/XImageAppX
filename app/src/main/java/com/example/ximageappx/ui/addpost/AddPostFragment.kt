@@ -1,4 +1,4 @@
-package com.example.ximageappx.ui
+package com.example.ximageappx.ui.addpost
 
 import android.os.Bundle
 import android.view.View
@@ -34,8 +34,8 @@ class AddPostFragment @Inject constructor(
                 btAddPost.isClickable = false
                 progressBar.isVisible = true
                 val description = inputDescription.text.toString()
-                firebaseService.uploadImageToFirebaseStorage(uri) {
-                    firebaseService.createPost(it, description)
+//                firebaseService.uploadImageToFirebaseStorage(uri) {
+                firebaseService.createPost(uri, description) {
                     context?.showToast("Post added")
                     val action = AddPostFragmentDirections.actionAddPostFragmentToGalleryFragment()
                     findNavController().navigate(action)

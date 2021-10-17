@@ -21,9 +21,7 @@ class ProfileFragment constructor(
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
             context?.showToast("Photo successfully uploaded")
-            firebaseService.uploadImageToFirebaseStorage(result.uriContent) {
-                firebaseService.setProfilePhoto(it)
-            }
+            firebaseService.setProfilePhoto(result.uriContent)
         } else {
             context?.showToast(result.error.toString())
         }
